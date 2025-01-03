@@ -16,13 +16,12 @@
     background-color: #ffffff;
     padding: 40px;
     min-width: 300px;
-    width: 25%;
+    width: 60%;
     height: auto;
     max-height: 90vh;
     border: 1px solid #e4e4e4;
     border-radius: 10px;
     overflow-y: auto;
-    box-sizing: border-box;
 }
 
 .itemBox {
@@ -35,7 +34,7 @@
 
 .title {
     font-size: 25px;
-    color: #4689d6;
+    color: #575757;
     font-weight: bold;
 }
 

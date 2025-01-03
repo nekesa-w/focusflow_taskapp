@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "taskapp",
+    "knox",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 AUTH_USER_MODEL = "taskapp.CustomUser"
+
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 ROOT_URLCONF = "backend.urls"
 
@@ -80,6 +83,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+REST_FRAMEWORK = {"DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",)}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
