@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "corsheaders",
     "taskapp",
 ]
 
@@ -49,7 +50,15 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+AUTH_USER_MODEL = "taskapp.CustomUser"
 
 ROOT_URLCONF = "backend.urls"
 
@@ -79,12 +88,15 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",  # Use MySQL as the database engine
-        "NAME": "taskapp",  # The name of your MySQL database
-        "USER": "root",  # MySQL username
-        "PASSWORD": "",  # MySQL password
-        "HOST": "localhost",  # Host, 'localhost' if MySQL is running on your local machine
-        "PORT": "3306",  # MySQL port (default: 3306)
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "taskapp",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET default_storage_engine=INNODB",
+        },
     }
 }
 
