@@ -17,6 +17,8 @@ import EventBusyIcon from "@mui/icons-material/EventBusy";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import { Link, useLocation } from "react-router-dom";
+import AxiosInstance from "./AxiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -24,6 +26,14 @@ function Navbar(props) {
 	const { content } = props;
 	const location = useLocation();
 	const path = location.pathname;
+	const navigate = useNavigate();
+
+	const logoutUser = () => {
+		AxiosInstance.post(`logoutall/`, {}).then(() => {
+			localStorage.removeItem("Token");
+			navigate("/login");
+		});
+	};
 
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const [isClosing, setIsClosing] = React.useState(false);
@@ -111,26 +121,6 @@ function Navbar(props) {
 				<ListItem disablePadding sx={{ width: "100%" }}>
 					<ListItemButton
 						component={Link}
-						to="/pending"
-						selected={"/pending" === path}
-						sx={{
-							width: "100%",
-							display: "flex",
-							alignItems: "center",
-							gap: "10px",
-						}}
-					>
-						<EventNoteIcon sx={{ color: "#575757" }} />
-						<ListItemText
-							primary="Pending"
-							sx={{ textAlign: "center", color: "#575757" }}
-						/>
-					</ListItemButton>
-				</ListItem>
-
-				<ListItem disablePadding sx={{ width: "100%" }}>
-					<ListItemButton
-						component={Link}
 						to="/overdue"
 						selected={"/overdue" === path}
 						sx={{
@@ -210,36 +200,7 @@ function Navbar(props) {
 						}}
 					>
 						<ListItem disablePadding sx={{ width: "100%" }}>
-							<ListItemButton
-								component={Link}
-								to="/userprofile"
-								selected={path === "/userprofile"}
-								sx={{
-									width: "100%",
-									display: "flex",
-									alignItems: "center",
-									gap: "10px",
-								}}
-							>
-								<ListItemText
-									primary="Profile"
-									sx={{ textAlign: "center", color: "#575757" }}
-								/>
-							</ListItemButton>
-						</ListItem>
-
-						<ListItem disablePadding sx={{ width: "100%" }}>
-							<ListItemButton
-								component={Link}
-								to="/logout"
-								selected={path === "/logout"}
-								sx={{
-									width: "100%",
-									display: "flex",
-									alignItems: "center",
-									gap: "10px",
-								}}
-							>
+							<ListItemButton onClick={logoutUser}>
 								<ListItemText
 									primary="Logout"
 									sx={{ textAlign: "center", color: "#575757" }}

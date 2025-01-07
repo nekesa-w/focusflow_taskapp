@@ -1,43 +1,53 @@
 import { useState } from "react";
+import NotFound from "./components/NotFound";
 import Home from "./components/Home";
+import Completed from "./components/Completed";
+import Overdue from "./components/Overdue";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
-import Completed from "./components/Completed";
-import Overdue from "./components/Overdue";
-import Pending from "./components/Pending";
-import UserProfile from "./components/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
 function App() {
 	const location = useLocation();
-	const noNavbar =
-		location.pathname === "/register" || location.pathname === "/login";
+	const showNavbar = ["/", "/home", "/completed", "/overdue"].includes(
+		location.pathname
+	);
 
 	return (
 		<>
-			{noNavbar ? (
-				<Routes>
-					<Route path="/register" element={<Register />} />
-					<Route path="/login" element={<Login />} />
-				</Routes>
-			) : (
-				<Navbar
-					content={
-						<Routes>
-							<Route element={<ProtectedRoute />}>
-								<Route path="/" element={<Home />} />
-								<Route path="/overdue" element={<Overdue />} />
-								<Route path="/pending" element={<Pending />} />
-								<Route path="/completed" element={<Completed />} />
-								<Route path="/userprofile" element={<UserProfile />} />
-							</Route>
-						</Routes>
-					}
-				/>
-			)}
+			<Routes>
+				{/* Routes with Navbar */}
+				<Route element={<ProtectedRoute />}>
+					<Route
+						path="/"
+						element={showNavbar ? <Navbar content={<Home />} /> : <Home />}
+					/>
+					<Route
+						path="/home"
+						element={showNavbar ? <Navbar content={<Home />} /> : <Home />}
+					/>
+					<Route
+						path="/completed"
+						element={
+							showNavbar ? <Navbar content={<Completed />} /> : <Completed />
+						}
+					/>
+					<Route
+						path="/overdue"
+						element={
+							showNavbar ? <Navbar content={<Overdue />} /> : <Overdue />
+						}
+					/>
+				</Route>
+
+				{/* Routes without Navbar */}
+				<Route path="/register" element={<Register />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
 		</>
 	);
 }

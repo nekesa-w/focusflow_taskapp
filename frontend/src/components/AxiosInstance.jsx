@@ -11,15 +11,21 @@ const AxiosInstance = axios.create({
 	},
 });
 
-AxiosInstance.interceptors.request.use((config) => {
-	const token = localStorage.getItem("Token");
-	if (token) {
-		config.headers.Authorization = `Token ${token}`;
-	} else {
-		config.headers.Authorization = ``;
+AxiosInstance.interceptors.request.use(
+	(config) => {
+		const token = localStorage.getItem("Token");
+		if (token) {
+			config.headers = {
+				...config.headers,
+				Authorization: `Token ${token}`,
+			};
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
 	}
-	return config;
-});
+);
 
 AxiosInstance.interceptors.response.use(
 	(response) => {
@@ -29,6 +35,7 @@ AxiosInstance.interceptors.response.use(
 		if (error.response && error.response.status === 401) {
 			localStorage.removeItem("Token");
 		}
+		return Promise.reject(error);
 	}
 );
 

@@ -47,3 +47,56 @@
     background-color: #4689d6 !important;
     font-weight: bold;
 }
+
+.task-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.task-title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.task-box {
+    background-color: #f5f5f5;
+    padding: 40px;
+    border-radius: 8px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.task-label {
+    font-size: 20px;
+}
+
+.task-completed,
+.task-pending,
+.task-overdue {
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.task-completed {
+    color: green;
+}
+
+.task-pending {
+    color: black;
+}
+
+.task-overdue {
+    color: red;
+}
+
+.no-tasks {
+    text-align: center;
+    font-size: 20px;
+}

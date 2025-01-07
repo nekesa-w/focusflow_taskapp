@@ -24,3 +24,23 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        model = Task
+        fields = (
+            "task_id",
+            "title",
+            "status",
+            "due_date",
+            "created_at",
+            "updated_at",
+            "user",
+        )
+
+    def create(self, validated_data):
+        task = Task.objects.create(**validated_data)
+        return task

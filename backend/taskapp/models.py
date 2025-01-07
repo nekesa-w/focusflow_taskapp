@@ -22,7 +22,6 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     email = models.EmailField(max_length=200, unique=True)
     username = models.CharField(max_length=200, null=True, blank=True)
-    task_breakdown_depth = models.IntegerField(default=1)
 
     objects = CustomUserManager()
 
@@ -31,10 +30,9 @@ class CustomUser(AbstractUser):
 
 
 class Task(models.Model):
-    task_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="tasks")
+    task_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
     status = models.CharField(
         max_length=50,
         choices=[
@@ -43,7 +41,7 @@ class Task(models.Model):
             ("overdue", "Overdue"),
         ],
     )
-    due_date = models.DateTimeField(blank=True, null=True)
+    due_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
