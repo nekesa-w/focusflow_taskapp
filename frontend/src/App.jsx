@@ -1,9 +1,8 @@
 import { useState } from "react";
-import NotFound from "./components/NotFound";
+import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
-import Completed from "./pages/Completed";
 import Overdue from "./pages/Overdue";
-import TaskForm from "./components/TaskForm";
+import Completed from "./pages/Completed";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";

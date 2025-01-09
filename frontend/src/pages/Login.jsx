@@ -6,7 +6,6 @@ import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import MyMessage from "../components/Message";
 import AxiosInstance from "../components/AxiosInstance";
 import "../App.css";
 
