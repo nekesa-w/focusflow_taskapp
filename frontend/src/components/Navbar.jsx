@@ -29,10 +29,16 @@ function Navbar(props) {
 	const navigate = useNavigate();
 
 	const logoutUser = () => {
-		AxiosInstance.post(`logoutall/`, {}).then(() => {
-			localStorage.removeItem("Token");
-			navigate("/login");
-		});
+		AxiosInstance.post("logoutall/")
+			.then(() => {
+				localStorage.removeItem("Token");
+				localStorage.removeItem("FirstName");
+				localStorage.removeItem("UserId");
+				navigate("/login");
+			})
+			.catch((error) => {
+				console.error("Error during logout", error);
+			});
 	};
 
 	const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -53,6 +59,8 @@ function Navbar(props) {
 		}
 	};
 
+	const firstName = localStorage.getItem("FirstName");
+
 	const drawer = (
 		<div>
 			<Toolbar />
@@ -66,7 +74,7 @@ function Navbar(props) {
 				flexDirection="column"
 			>
 				<img
-					src="/logo.png"
+					src="/logo.webp"
 					alt="Logo"
 					style={{ width: "60px", height: "auto" }}
 				/>
@@ -74,11 +82,13 @@ function Navbar(props) {
 					variant="h5"
 					sx={{
 						fontWeight: "bold",
-						color: "orange",
+						color: "#2d74b2",
 						margin: 0,
+						textAlign: "center",
 					}}
 				>
-					FOCUSFLOW
+					FOCUS <br />
+					FLOW
 				</Typography>
 			</Box>
 			<Box
@@ -173,7 +183,7 @@ function Navbar(props) {
 				sx={{
 					width: { sm: `calc(100% - ${drawerWidth}px)` },
 					ml: { sm: `${drawerWidth}px` },
-					backgroundColor: "transparent",
+					backgroundColor: "white",
 					marginTop: { xs: 0, sm: "20px" },
 					marginRight: { xs: 0, sm: "20px" },
 					padding: "10px",
@@ -199,6 +209,18 @@ function Navbar(props) {
 							marginLeft: "auto",
 						}}
 					>
+						<ListItem disablePadding sx={{ width: "100%" }}>
+							<ListItemButton>
+								<ListItemText
+									primary={firstName ? `Hello, ${firstName}` : "Hello, User"}
+									sx={{
+										textAlign: "center",
+										color: "#2d74b2",
+										whiteSpace: "nowrap",
+									}}
+								/>
+							</ListItemButton>
+						</ListItem>
 						<ListItem disablePadding sx={{ width: "100%" }}>
 							<ListItemButton onClick={logoutUser}>
 								<ListItemText
@@ -272,12 +294,14 @@ function Navbar(props) {
 					borderTopRightRadius: { xs: 0, sm: "10px" },
 					borderBottomRightRadius: { xs: 0, sm: "10px" },
 					boxShadow: "1px 1px 10px rgba(0, 0, 0, .1)",
+					overflowY: "auto",
 				}}
 			>
 				<Toolbar />
 				<Box
 					sx={{
 						padding: "30px",
+						overflowY: "auto",
 					}}
 				>
 					{content}

@@ -1,0 +1,169 @@
+import React, { useEffect, useState } from "react";
+import AxiosInstance from "../components/AxiosInstance";
+import {
+	Container,
+	Box,
+	Checkbox,
+	FormControlLabel,
+	Fab,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Button,
+} from "@mui/material";
+import TaskForm from "../components/TaskForm";
+import AddIcon from "@mui/icons-material/Add";
+import { formatDueDate } from "../components/utils";
+import EditIcon from "@mui/icons-material/Edit";
+
+const Home = () => {
+	const [tasks, setTasks] = useState([]);
+	const [open, setOpen] = useState(false);
+	const [currentTask, setCurrentTask] = useState(null);
+
+	useEffect(() => {
+		fetchTasks();
+	}, []);
+
+	const fetchTasks = async () => {
+		try {
+			const response = await AxiosInstance.get("tasks/");
+			setTasks(response.data);
+		} catch (error) {
+			console.error("Error fetching tasks:", error);
+		}
+	};
+
+	const handleCheckboxChange = async (taskId, currentStatus) => {
+		const newStatus = currentStatus === "Pending" ? "Completed" : "Pending";
+		const updatedTask = { status: newStatus, updated_at: new Date() };
+
+		setTasks((prevTasks) =>
+			prevTasks.map((task) =>
+				task.task_id === taskId ? { ...task, status: newStatus } : task
+			)
+		);
+
+		try {
+			await AxiosInstance.put(`tasks/${taskId}/`, updatedTask);
+		} catch (error) {
+			console.error("Error updating task status:", error);
+			setTasks((prevTasks) =>
+				prevTasks.map((task) =>
+					task.task_id === taskId ? { ...task, status: currentStatus } : task
+				)
+			);
+		}
+	};
+
+	const handleEditClick = (task) => {
+		setCurrentTask(task);
+		setOpen(true);
+	};
+
+	const handleTaskCreated = (newTask) => {
+		setTasks((prevTasks) => [newTask, ...prevTasks]);
+	};
+
+	const handleTaskUpdated = (updatedTask) => {
+		setTasks((prevTasks) =>
+			prevTasks.map((task) =>
+				task.task_id === updatedTask.task_id ? updatedTask : task
+			)
+		);
+	};
+
+	const pendingTasks = tasks.filter((task) => task.status === "Pending");
+
+	const handleClickOpen = () => {
+		setCurrentTask(null);
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	return (
+		<Container className="task-container">
+			<Box className="task-title">To Do</Box>
+			<Box className="task-box">
+				{pendingTasks.length === 0 ? (
+					<Box className="no-tasks">No tasks available</Box>
+				) : (
+					pendingTasks.map((task) => (
+						<Box key={task.task_id} className="task-item">
+							<FormControlLabel
+								control={
+									<Box className="task-check">
+										<Checkbox
+											checked={task.status === "Completed"}
+											onChange={() =>
+												handleCheckboxChange(task.task_id, task.status)
+											}
+											className="task-checkbox"
+											sx={{ padding: 0 }}
+										/>
+									</Box>
+								}
+								label={
+									<Box className="task-pending">
+										<Box className="task-data">
+											{task.title} by{" "}
+											<Box className="task-due-date-pending">
+												{formatDueDate(task.due_date)}
+											</Box>
+										</Box>
+										<Box className="task-edit">
+											<Button
+												variant="outlined"
+												color="primary"
+												onClick={() => handleEditClick(task)}
+												startIcon={<EditIcon />}
+											/>
+										</Box>
+									</Box>
+								}
+							/>
+						</Box>
+					))
+				)}
+			</Box>
+
+			<Fab
+				color="primary"
+				aria-label="add"
+				className="floating-button"
+				onClick={handleClickOpen}
+				sx={{
+					position: "fixed",
+					bottom: 50,
+					right: 50,
+				}}
+			>
+				<AddIcon />
+			</Fab>
+
+			<Dialog open={open} onClose={handleClose} className="task-dialog">
+				<DialogTitle className="task-dialog-title">
+					{currentTask ? "Edit Task" : "Create New Task"}
+				</DialogTitle>
+				<DialogContent className="task-dialog-content">
+					<TaskForm
+						task={currentTask}
+						onTaskCreated={handleTaskCreated}
+						onTaskUpdated={handleTaskUpdated}
+					/>
+				</DialogContent>
+				<DialogActions className="task-dialog-actions">
+					<button className="task-dialog-cancel" onClick={handleClose}>
+						Cancel
+					</button>
+				</DialogActions>
+			</Dialog>
+		</Container>
+	);
+};
+
+export default Home;

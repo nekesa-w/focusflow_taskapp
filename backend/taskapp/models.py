@@ -36,9 +36,8 @@ class Task(models.Model):
     status = models.CharField(
         max_length=50,
         choices=[
-            ("pending", "Pending"),
-            ("completed", "Completed"),
-            ("overdue", "Overdue"),
+            ("Pending", "Pending"),
+            ("Completed", "Completed"),
         ],
     )
     due_date = models.DateField(blank=True, null=True)
@@ -56,8 +55,8 @@ class Subtask(models.Model):
     status = models.CharField(
         max_length=50,
         choices=[
-            ("pending", "Pending"),
-            ("completed", "Completed"),
+            ("Pending", "Pending"),
+            ("Completed", "Completed"),
         ],
     )
     created_at = models.DateTimeField(auto_now_add=True)

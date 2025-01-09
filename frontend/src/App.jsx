@@ -1,10 +1,11 @@
 import { useState } from "react";
 import NotFound from "./components/NotFound";
-import Home from "./components/Home";
-import Completed from "./components/Completed";
-import Overdue from "./components/Overdue";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import Home from "./pages/Home";
+import Completed from "./pages/Completed";
+import Overdue from "./pages/Overdue";
+import TaskForm from "./components/TaskForm";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import { Routes, Route, useLocation } from "react-router-dom";

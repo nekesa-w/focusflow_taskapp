@@ -1,3 +1,15 @@
+/**login and register**/
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
 .myBackground {
     width: 100vw;
     min-height: 100vh;
@@ -7,7 +19,7 @@
     justify-content: center;
     flex-direction: column;
     background: #b5eeae;
-    background: radial-gradient(circle, #b5eeae 0%, #94bbe9 100%);
+    background: radial-gradient(circle, #e4e4e4 0%, #87e1de 100%);
     box-sizing: border-box;
     padding: 20px;
 }
@@ -44,59 +56,137 @@
 }
 
 .myButton {
-    background-color: #4689d6 !important;
+    background-color: #2d74b2 !important;
     font-weight: bold;
 }
 
+/** tasks**/
 .task-container {
     max-width: 600px;
     margin: 0 auto;
+    border-radius: 10px;
 }
 
 .task-title {
     text-align: center;
-    font-size: 40px;
+    font-size: 50px;
     font-weight: bold;
 }
 
 .task-box {
     background-color: #f5f5f5;
-    padding: 40px;
-    border-radius: 8px;
+    padding: 50px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.no-tasks {
+    text-align: center;
 }
 
 .task-item {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     padding: 10px 0;
+    margin: 10px 0;
     border-bottom: 1px solid #ddd;
+    width: 100%;
 }
 
-
-.task-label {
-    font-size: 20px;
+.task-checkbox {
+    transform: scale(2);
 }
 
 .task-completed,
 .task-pending,
 .task-overdue {
     font-size: 20px;
+    margin-left: 20px;
+    color: #575757;
+    display: flex;
+    justify-content: left;
+    width: 950px;
+}
+
+.task-data {
+    display: flex;
+    width: 100%;
+}
+
+.task-due-date-pending,
+.task-due-date-overdue,
+.task-due-date-completed {
     margin-left: 10px;
 }
 
-.task-completed {
-    color: green;
+.task-due-date-pending {
+    font-weight: bold;
+    color: #2d74b2;
 }
 
-.task-pending {
-    color: black;
+.task-due-date-overdue {
+    font-weight: bold;
+    color: #d93f39;
 }
 
-.task-overdue {
-    color: red;
+.task-due-date-completed {
+    font-weight: bold;
+    color: #74b22d;
 }
 
-.no-tasks {
-    text-align: center;
-    font-size: 20px;
+.task-edit {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 20px;
+}
+
+
+/**pop up dialog**/
+.task-dialog-title {
+    font-weight: bold;
+    font-size: 30px !important;
+    text-align: center !important;
+    color: #2d74b2;
+}
+
+.task-dialog-content {
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.task-dialog-actions {
+    display: flex;
+    justify-content: center !important;
+}
+
+.task-dialog-cancel {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.task-dialog-cancel:hover {
+    background-color: #d32f2f;
+}
+
+/**tasks**/
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+}
+
+.form-input {
+    margin: 20px 0;
+}
+
+.form-action {
+    display: flex;
+    justify-content: center;
 }
