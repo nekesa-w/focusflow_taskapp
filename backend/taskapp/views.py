@@ -6,6 +6,10 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model, authenticate
 from knox.models import AuthToken
 from datetime import datetime
+from rest_framework.decorators import action
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+import re
 from rest_framework import status
 
 User = get_user_model()
@@ -131,8 +135,47 @@ class TaskViewset(viewsets.ViewSet):
         except Task.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=False, methods=["post"], url_path="generate-subtasks")
+    def generate_subtasks(self, request):
+        task_title = request.data.get("task_title")
+        num_subtasks = int(request.data.get("num_subtasks", 2))  # Default to 2
 
-class SubtaskViewSet(viewsets.ViewSet):
+        if not task_title:
+            return Response(
+                {"detail": "Task title is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        model_name = "your-model-path"  # Example path to model
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForCausalLM.from_pretrained(model_name)
+
+        # Generate subtasks logic
+        def generate_subtasks(task_description, model, tokenizer, num_subtasks):
+            prompt = (
+                f"Break down the task '{task_description}' into {num_subtasks} steps."
+            )
+            inputs = tokenizer(
+                prompt, return_tensors="pt", padding=True, truncation=True
+            )
+
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    num_return_sequences=1,
+                    max_length=256,
+                    no_repeat_ngram_size=2,
+                )
+
+            generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            subtasks = generated_text.split("\n")
+            return subtasks[:num_subtasks]
+
+        subtasks = generate_subtasks(task_title, model, tokenizer, num_subtasks)
+        return Response({"subtasks": subtasks}, status=status.HTTP_200_OK)
+
+
+class SubtaskViewset(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = SubtaskSerializer
 

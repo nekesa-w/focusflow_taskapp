@@ -82,6 +82,8 @@
 
 .no-tasks {
     text-align: center;
+    font-size: 20px;
+    color: #575757;
 }
 
 .task-item {

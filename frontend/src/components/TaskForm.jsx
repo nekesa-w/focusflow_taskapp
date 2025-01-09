@@ -8,13 +8,11 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 		due_date: "",
 		subtaskTitle: "",
 		parentTaskId: null,
-		numSubtasks: 2,
-		levelOfDetail: "low",
 		status: "Pending",
 	});
 
 	const [error, setError] = useState("");
-	const [showSubtaskOptions, setShowSubtaskOptions] = useState(false);
+	const [taskId, setTaskId] = useState(null);
 
 	const userId = localStorage.getItem("UserId");
 
@@ -25,10 +23,9 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				due_date: task.due_date,
 				subtaskTitle: "",
 				parentTaskId: task.parent_task_id || null,
-				numSubtasks: 2,
-				levelOfDetail: "low",
 				status: task.status || "Pending",
 			});
+			setTaskId(task.task_id);
 		}
 	}, [task]);
 
@@ -41,11 +38,6 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 		}
 
 		try {
-			console.log("Sending task creation request:", {
-				title: newTask.title,
-				due_date: newTask.due_date,
-				user: userId,
-			});
 			const response = await AxiosInstance.post("tasks/", {
 				title: newTask.title,
 				due_date: newTask.due_date,
@@ -59,6 +51,7 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				subtaskTitle: "",
 				status: "Pending",
 			});
+			setTaskId(response.data.task_id);
 		} catch (error) {
 			console.error("Error creating task:", error);
 			setError("An error occurred while creating the task. Please try again.");
@@ -74,30 +67,20 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 		}
 
 		try {
-			const updatedTaskData = {
+			const response = await AxiosInstance.put(`tasks/${taskId}/`, {
 				title: newTask.title,
 				due_date: newTask.due_date,
 				status: newTask.status,
-				parent_task_id: newTask.parentTaskId || null,
-				subtaskTitle: newTask.subtaskTitle,
-			};
-
-			const response = await AxiosInstance.put(
-				`tasks/${task.task_id}/`,
-				updatedTaskData
-			);
+			});
 
 			onTaskUpdated(response.data);
-
 			setNewTask({
-				title: "",
-				due_date: "",
+				title: response.data.title,
+				due_date: response.data.due_date,
 				subtaskTitle: "",
-				parentTaskId: null,
-				numSubtasks: 2,
-				levelOfDetail: "low",
-				status: "Pending",
+				status: response.data.status,
 			});
+			setTaskId(response.data.task_id);
 		} catch (error) {
 			console.error("Error updating task:", error);
 			setError("An error occurred while updating the task. Please try again.");
@@ -105,47 +88,41 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 	};
 
 	const handleDeleteTask = async () => {
+		setError("");
+
+		if (!taskId) {
+			setError("No task selected for deletion.");
+			return;
+		}
+
 		try {
-			await AxiosInstance.delete(`tasks/${task.task_id}/`);
+			await AxiosInstance.delete(`tasks/${taskId}/`);
+			setTaskId(null);
+			setNewTask({
+				title: "",
+				due_date: "",
+				subtaskTitle: "",
+				status: "Pending",
+			});
 			onTaskUpdated(null);
+			onTaskUpdated((prevTasks) =>
+				prevTasks.filter((task) => task.task_id !== taskId)
+			);
+			setOpen(false);
+			window.location.reload();
 		} catch (error) {
 			console.error("Error deleting task:", error);
 			setError("An error occurred while deleting the task. Please try again.");
 		}
 	};
 
-	const handleCreateSubtask = async () => {
-		setError("");
-
-		if (!newTask.subtaskTitle) {
-			setError("Please fill in the subtask title.");
+	const handleMotivatingButtonClick = () => {
+		if (!newTask.title || !newTask.due_date) {
+			setError("Please fill in both the title and due date.");
 			return;
 		}
 
-		if (!newTask.parentTaskId) {
-			setError("Parent task ID is missing for subtask.");
-			return;
-		}
-
-		try {
-			const response = await AxiosInstance.post("subtasks/", {
-				title: newTask.subtaskTitle,
-				due_date: newTask.due_date,
-				task: newTask.parentTaskId,
-			});
-
-			onTaskCreated(response.data);
-			setNewTask({ ...newTask, subtaskTitle: "" });
-		} catch (error) {
-			console.error("Error creating subtask:", error);
-			setError(
-				"An error occurred while creating the subtask. Please try again."
-			);
-		}
-	};
-
-	const handleGenerateSubtasksOptions = () => {
-		setShowSubtaskOptions(true);
+		handleCreateTask();
 	};
 
 	return (
@@ -215,52 +192,12 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 					<Button
 						variant="outlined"
 						sx={{ marginLeft: 2 }}
-						onClick={handleGenerateSubtasksOptions}
+						onClick={handleMotivatingButtonClick}
 					>
-						Generate Subtasks
+						Create Task and Make Motivating
 					</Button>
 				)}
 			</Box>
-
-			{showSubtaskOptions && (
-				<Box>
-					<Box className="form-input">
-						<TextField
-							label="Number of Subtasks (2-10)"
-							variant="outlined"
-							fullWidth
-							type="number"
-							value={newTask.numSubtasks}
-							onChange={(e) =>
-								setNewTask({
-									...newTask,
-									numSubtasks: Math.min(Math.max(e.target.value, 2), 10),
-								})
-							}
-							inputProps={{ min: 2, max: 10 }}
-						/>
-					</Box>
-
-					<Box className="form-input">
-						<TextField
-							label="Level of Detail (High or Low)"
-							variant="outlined"
-							fullWidth
-							select
-							value={newTask.levelOfDetail}
-							onChange={(e) =>
-								setNewTask({ ...newTask, levelOfDetail: e.target.value })
-							}
-							SelectProps={{
-								native: true,
-							}}
-						>
-							<option value="low">Low</option>
-							<option value="high">High</option>
-						</TextField>
-					</Box>
-				</Box>
-			)}
 		</Box>
 	);
 };

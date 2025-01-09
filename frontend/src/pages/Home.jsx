@@ -67,11 +67,17 @@ const Home = () => {
 	};
 
 	const handleTaskUpdated = (updatedTask) => {
-		setTasks((prevTasks) =>
-			prevTasks.map((task) =>
-				task.task_id === updatedTask.task_id ? updatedTask : task
-			)
-		);
+		if (updatedTask === null) {
+			setTasks((prevTasks) =>
+				prevTasks.filter((task) => task.task_id !== currentTask.task_id)
+			);
+		} else {
+			setTasks((prevTasks) =>
+				prevTasks.map((task) =>
+					task.task_id === updatedTask.task_id ? updatedTask : task
+				)
+			);
+		}
 	};
 
 	const pendingTasks = tasks.filter((task) => task.status === "Pending");
