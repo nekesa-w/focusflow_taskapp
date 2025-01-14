@@ -19,8 +19,8 @@ A web-based task management app designed to assist users, particularly those wit
 
 ## Features
 
-- **Task Breakdown**: Automatically breaks down complex tasks into smaller, actionable sub-tasks using the **smollm2-135M-instruct** AI model.
-- **Task Creation and Management**: Easily create tasks and assign due dates and priorities. Keep track of progress and mark tasks as complete.
+- **Task Breakdown**: Automatically breaks down complex tasks into smaller, actionable sub-tasks using LLM model.
+- **Task Creation and Management**: Easily create tasks and assign due dates. Keep track of progress and mark tasks as complete.
 - **Subtask Organization**: Tasks are divided into subtasks, allowing users to focus on one small step at a time.
 - **User Authentication**: Secure login and registration using token-based authentication.
 - **Intuitive User Interface**: Clean, responsive design built with **React** and **Material UI**, ensuring a pleasant user experience.
@@ -43,7 +43,7 @@ A web-based task management app designed to assist users, particularly those wit
 - **MariaDB 1.4.4**: Relational database for storing user and task data.
 
 ### **Machine Learning**:
-- **smollm2-135M-instruct**: The AI model used for breaking down tasks into smaller, actionable sub-tasks based on user input.
+- **SmolLM2-135M-INSTRUCT**: The LLM model used for breaking down tasks into smaller, actionable sub-tasks based on user input.
 
 ---
 
