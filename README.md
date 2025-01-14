@@ -1,10 +1,5 @@
-Here’s a draft of the README for your web-based task management application, tailored to users with ADHD and utilizing the **smollm2-135M-instruct** model for task breakdown.
-
----
-
-# ADHD Task Management Application
-
-A web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **smollm2-135M-instruct** model, which uses AI to help users deconstruct complex tasks into more digestible sub-tasks.
+# FocusFlow
+A web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
 
 ---
 
