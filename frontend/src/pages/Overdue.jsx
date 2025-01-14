@@ -19,11 +19,13 @@ import EditIcon from "@mui/icons-material/Edit";
 
 const Overdue = () => {
 	const [tasks, setTasks] = useState([]);
+	const [subtasks, setSubtasks] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [currentTask, setCurrentTask] = useState(null);
 
 	useEffect(() => {
 		fetchTasks();
+		fetchSubtasks();
 	}, []);
 
 	const fetchTasks = async () => {
@@ -32,6 +34,15 @@ const Overdue = () => {
 			setTasks(response.data);
 		} catch (error) {
 			console.error("Error fetching tasks:", error);
+		}
+	};
+
+	const fetchSubtasks = async () => {
+		try {
+			const response = await AxiosInstance.get("/subtasks/");
+			setSubtasks(response.data);
+		} catch (error) {
+			console.error("Error fetching subtasks:", error);
 		}
 	};
 
@@ -57,9 +68,31 @@ const Overdue = () => {
 		}
 	};
 
-	const handleEditClick = (task) => {
-		setCurrentTask(task);
-		setOpen(true);
+	const handleSubtaskCheckboxChange = async (subtaskId, currentStatus) => {
+		const newStatus = currentStatus === "Pending" ? "Completed" : "Pending";
+		const updatedSubtask = { status: newStatus };
+
+		setSubtasks((prevSubtasks) =>
+			prevSubtasks.map((subtask) =>
+				subtask.subtask_id === subtaskId
+					? { ...subtask, status: newStatus }
+					: subtask
+			)
+		);
+
+		try {
+			await AxiosInstance.put(`subtasks/${subtaskId}/`, updatedSubtask);
+		} catch (error) {
+			console.error("Error updating subtask status:", error);
+
+			setSubtasks((prevSubtasks) =>
+				prevSubtasks.map((subtask) =>
+					subtask.subtask_id === subtaskId
+						? { ...subtask, status: currentStatus }
+						: subtask
+				)
+			);
+		}
 	};
 
 	const handleTaskCreated = (newTask) => {
@@ -67,70 +100,117 @@ const Overdue = () => {
 	};
 
 	const handleTaskUpdated = (updatedTask) => {
-		setTasks((prevTasks) =>
-			prevTasks.map((task) =>
-				task.task_id === updatedTask.task_id ? updatedTask : task
-			)
-		);
+		if (updatedTask === null) {
+			setTasks((prevTasks) =>
+				prevTasks.filter((task) => task.task_id !== currentTask.task_id)
+			);
+		} else {
+			setTasks((prevTasks) =>
+				prevTasks.map((task) =>
+					task.task_id === updatedTask.task_id ? updatedTask : task
+				)
+			);
+		}
 	};
 
 	const currentDate = new Date();
+	currentDate.setHours(0, 0, 0, 0);
+
 	const overdueTasks = tasks.filter((task) => {
 		const taskDueDate = new Date(task.due_date);
+		taskDueDate.setHours(0, 0, 0, 0);
 		return task.status === "Pending" && taskDueDate < currentDate;
 	});
 
-	const handleClickOpen = () => {
+	const handleNewClick = () => {
+		setCurrentTask(null);
+		setOpen(true);
+	};
+
+	const handleEditClick = (task) => {
+		setCurrentTask(task);
 		setOpen(true);
 	};
 
 	const handleClose = () => {
-		// Clear the current task when closing
-		setCurrentTask(null);
 		setOpen(false);
 	};
 
 	return (
 		<Container className="task-container">
-			<Box className="task-title">Past Due</Box>
+			<Box className="task-page-title">Past Due</Box>
 			<Box className="task-box">
 				{overdueTasks.length === 0 ? (
-					<Box className="no-tasks">No overdue tasks available</Box>
+					<Box className="no-tasks">No tasks available</Box>
 				) : (
-					overdueTasks.map((task) => (
-						<Box key={task.task_id} className="task-item">
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={task.status === "Completed"}
-										onChange={() =>
-											handleCheckboxChange(task.task_id, task.status)
-										}
-										className="task-checkbox"
-										sx={{ padding: 0 }}
-									/>
-								}
-								label={
-									<Box className="task-overdue">
-										<Box className="task-data">
-											{task.title} by{" "}
-											<Box className="task-due-date-overdue">
-												{formatDueDate(task.due_date)}
+					overdueTasks.map((task) => {
+						const taskSubtasks = subtasks.filter(
+							(subtask) => subtask.task === task.task_id
+						);
+
+						return (
+							<Box key={task.task_id} className="task-item">
+								<Box className="task-row">
+									<FormControlLabel
+										control={
+											<Box className="task-check">
+												<Checkbox
+													checked={task.status === "Completed"}
+													onChange={() =>
+														handleCheckboxChange(task.task_id, task.status)
+													}
+													className="task-checkbox"
+													sx={{ padding: 0 }}
+												/>
 											</Box>
-										</Box>
-										<Box className="task-edit">
-											<Button
-												variant="outlined"
-												color="primary"
-												onClick={() => handleEditClick(task)}
-												startIcon={<EditIcon />}
-											/>
-										</Box>
+										}
+										label={<Box className="task-title">{task.title} by</Box>}
+									/>
+
+									<Box className="task-due-date-overdue">
+										{formatDueDate(task.due_date)}
 									</Box>
-								}
-							/>
-						</Box>
-					))
+
+									<Box className="task-edit">
+										<Button
+											className="task-edit-button"
+											variant="text"
+											color="primary"
+											onClick={() => handleEditClick(task)}
+											startIcon={<EditIcon />}
+										/>
+									</Box>
+								</Box>
+
+								{taskSubtasks.length > 0 && (
+									<Box className="task-subtasks">
+										{taskSubtasks.map((subtask) => (
+											<Box key={subtask.subtask_id} className="subtask-item">
+												<FormControlLabel
+													control={
+														<Checkbox
+															checked={subtask.status === "Completed"}
+															onChange={() =>
+																handleSubtaskCheckboxChange(
+																	subtask.subtask_id,
+																	subtask.status
+																)
+															}
+															className="subtask-checkbox"
+															sx={{ padding: 0 }}
+														/>
+													}
+													label={
+														<Box className="subtask-title">{subtask.title}</Box>
+													}
+												/>
+											</Box>
+										))}
+									</Box>
+								)}
+							</Box>
+						);
+					})
 				)}
 			</Box>
 
@@ -138,11 +218,14 @@ const Overdue = () => {
 				color="primary"
 				aria-label="add"
 				className="floating-button"
-				onClick={handleClickOpen}
+				onClick={handleNewClick}
 				sx={{
 					position: "fixed",
 					bottom: 50,
 					right: 50,
+					"&:hover": {
+						backgroundColor: "#87b7e1",
+					},
 				}}
 			>
 				<AddIcon />
@@ -160,8 +243,8 @@ const Overdue = () => {
 					/>
 				</DialogContent>
 				<DialogActions className="task-dialog-actions">
-					<button className="task-dialog-cancel" onClick={handleClose}>
-						Cancel
+					<button className="task-dialog-close" onClick={handleClose}>
+						Close
 					</button>
 				</DialogActions>
 			</Dialog>

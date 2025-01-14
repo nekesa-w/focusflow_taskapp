@@ -54,10 +54,8 @@ class Subtask(models.Model):
     title = models.CharField(max_length=255)
     status = models.CharField(
         max_length=50,
-        choices=[
-            ("Pending", "Pending"),
-            ("Completed", "Completed"),
-        ],
+        choices=[("Pending", "Pending"), ("Completed", "Completed")],
+        default="Pending",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -60,16 +60,92 @@
     font-weight: bold;
 }
 
-/** tasks**/
+/**task pop up dialog**/
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+}
+
+.form-action {
+    display: flex;
+    justify-content: center;
+}
+
+/**subtask pop up dialog**/
+.task-dialog-title {
+    font-weight: bold;
+    font-size: 30px !important;
+    text-align: center !important;
+    color: #2d74b2;
+    margin-bottom: 20px;
+}
+
+task-dialog-titlesmall {
+    font-weight: bold;
+    font-size: 20px !important;
+    text-align: center !important;
+    color: #2d74b2 !important;
+    margin-bottom: 20px;
+}
+
+.task-dialog-content {
+    padding: 20px;
+    max-width: 400px;
+    overflow-y: auto;
+}
+
+.task-dialog-actions {
+    display: flex;
+    justify-content: center !important;
+}
+
+.task-dialog-close {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.task-dialog-cancel:hover {
+    background-color: #d32f2f;
+}
+
+.task-dialog-desc {
+    font-weight: bolder;
+}
+
+.task-dialog-desc::before {
+    content: "❤️";
+    margin-right: 5px;
+}
+
+.task-dialog-desc::after {
+    content: "❤️";
+    margin-left: 5px;
+}
+
+.task-dialog-task-subtask {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+}
+
+/** tasks **/
 .task-container {
     max-width: 600px;
     margin: 0 auto;
     border-radius: 10px;
 }
 
-.task-title {
+.task-page-title {
     text-align: center;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
 }
 
@@ -88,37 +164,33 @@
 
 .task-item {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: flex-start;
     padding: 10px 0;
     margin: 10px 0;
     border-bottom: 1px solid #ddd;
     width: 100%;
 }
 
-.task-checkbox {
-    transform: scale(2);
-}
-
-.task-completed,
-.task-pending,
-.task-overdue {
-    font-size: 20px;
-    margin-left: 20px;
-    color: #575757;
+.task-row {
     display: flex;
-    justify-content: left;
-    width: 950px;
-}
-
-.task-data {
-    display: flex;
+    align-items: center;
     width: 100%;
+    font-size: 20px;
 }
 
-.task-due-date-pending,
-.task-due-date-overdue,
-.task-due-date-completed {
+.task-check {
+    margin-left: 20px;
+}
+
+.task-checkbox {
+    transform: scale(1.5);
+}
+
+.task-title {
+    font-size: 20px;
     margin-left: 10px;
+    color: #575757;
 }
 
 .task-due-date-pending {
@@ -126,69 +198,49 @@
     color: #2d74b2;
 }
 
-.task-due-date-overdue {
-    font-weight: bold;
-    color: #d93f39;
-}
-
 .task-due-date-completed {
     font-weight: bold;
     color: #74b22d;
 }
 
+.task-due-date-overdue {
+    font-weight: bold;
+    color: #c64532;
+}
+
 .task-edit {
-    display: flex;
-    justify-content: flex-end;
+    margin-left: 5px;
+}
+
+.task-edit .task-edit-button {
+    padding: 5px;
+}
+
+.task-edit-button:hover {
+    background-color: #87b7e1;
+}
+
+/** subtasks **/
+.task-subtasks {
+    margin-top: 20px;
+    padding-left: 30px;
+    background-color: transparent;
     margin-left: 20px;
 }
 
-
-/**pop up dialog**/
-.task-dialog-title {
-    font-weight: bold;
-    font-size: 30px !important;
-    text-align: center !important;
-    color: #2d74b2;
-}
-
-.task-dialog-content {
-    padding: 20px;
-    max-width: 400px;
-    width: 100%;
-}
-
-.task-dialog-actions {
+.subtask-item {
     display: flex;
-    justify-content: center !important;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.task-dialog-cancel {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 1rem;
+.subtask-checkbox {
+    transform: scale(1.5);
+    margin-right: 20px;
 }
 
-.task-dialog-cancel:hover {
-    background-color: #d32f2f;
-}
-
-/**tasks**/
-.task-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 16px;
-}
-
-.form-input {
-    margin: 20px 0;
-}
-
-.form-action {
-    display: flex;
-    justify-content: center;
+.subtask-title {
+    font-size: 18px;
+    margin-left: 10px;
+    color: #575757;
 }

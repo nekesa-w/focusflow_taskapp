@@ -50,6 +50,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+class SubtaskSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(
+        max_length=50,
+        default="Pending",
+        required=False,
+    )
+
+    class Meta:
+        model = Subtask
+        fields = ["subtask_id", "task", "title", "status", "created_at"]
+
+    def create(self, validated_data):
+        subtask = Subtask.objects.create(**validated_data)
+        return subtask
+
+
 class TaskSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     status = serializers.CharField(
@@ -57,6 +73,7 @@ class TaskSerializer(serializers.ModelSerializer):
         default="Pending",
         required=False,
     )
+    subtasks = SubtaskSerializer(many=True, required=False)
 
     class Meta:
         model = Task
@@ -68,18 +85,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "user",
+            "subtasks",
         )
 
     def create(self, validated_data):
         task = Task.objects.create(**validated_data)
         return task
-
-
-class SubtaskSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subtask
-        fields = ["subtask_id", "task", "title", "status", "created_at"]
-
-    def create(self, validated_data):
-        subtask = Subtask.objects.create(**validated_data)
-        return subtask

@@ -19,11 +19,13 @@ import EditIcon from "@mui/icons-material/Edit";
 
 const Home = () => {
 	const [tasks, setTasks] = useState([]);
+	const [subtasks, setSubtasks] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [currentTask, setCurrentTask] = useState(null);
 
 	useEffect(() => {
 		fetchTasks();
+		fetchSubtasks();
 	}, []);
 
 	const fetchTasks = async () => {
@@ -32,6 +34,15 @@ const Home = () => {
 			setTasks(response.data);
 		} catch (error) {
 			console.error("Error fetching tasks:", error);
+		}
+	};
+
+	const fetchSubtasks = async () => {
+		try {
+			const response = await AxiosInstance.get("/subtasks/");
+			setSubtasks(response.data);
+		} catch (error) {
+			console.error("Error fetching subtasks:", error);
 		}
 	};
 
@@ -57,9 +68,31 @@ const Home = () => {
 		}
 	};
 
-	const handleEditClick = (task) => {
-		setCurrentTask(task);
-		setOpen(true);
+	const handleSubtaskCheckboxChange = async (subtaskId, currentStatus) => {
+		const newStatus = currentStatus === "Pending" ? "Completed" : "Pending";
+		const updatedSubtask = { status: newStatus };
+
+		setSubtasks((prevSubtasks) =>
+			prevSubtasks.map((subtask) =>
+				subtask.subtask_id === subtaskId
+					? { ...subtask, status: newStatus }
+					: subtask
+			)
+		);
+
+		try {
+			await AxiosInstance.put(`subtasks/${subtaskId}/`, updatedSubtask);
+		} catch (error) {
+			console.error("Error updating subtask status:", error);
+
+			setSubtasks((prevSubtasks) =>
+				prevSubtasks.map((subtask) =>
+					subtask.subtask_id === subtaskId
+						? { ...subtask, status: currentStatus }
+						: subtask
+				)
+			);
+		}
 	};
 
 	const handleTaskCreated = (newTask) => {
@@ -82,8 +115,13 @@ const Home = () => {
 
 	const pendingTasks = tasks.filter((task) => task.status === "Pending");
 
-	const handleClickOpen = () => {
+	const handleNewClick = () => {
 		setCurrentTask(null);
+		setOpen(true);
+	};
+
+	const handleEditClick = (task) => {
+		setCurrentTask(task);
 		setOpen(true);
 	};
 
@@ -93,47 +131,79 @@ const Home = () => {
 
 	return (
 		<Container className="task-container">
-			<Box className="task-title">To Do</Box>
+			<Box className="task-page-title">To Do</Box>
 			<Box className="task-box">
 				{pendingTasks.length === 0 ? (
 					<Box className="no-tasks">No tasks available</Box>
 				) : (
-					pendingTasks.map((task) => (
-						<Box key={task.task_id} className="task-item">
-							<FormControlLabel
-								control={
-									<Box className="task-check">
-										<Checkbox
-											checked={task.status === "Completed"}
-											onChange={() =>
-												handleCheckboxChange(task.task_id, task.status)
-											}
-											className="task-checkbox"
-											sx={{ padding: 0 }}
+					pendingTasks.map((task) => {
+						const taskSubtasks = subtasks.filter(
+							(subtask) => subtask.task === task.task_id
+						);
+
+						return (
+							<Box key={task.task_id} className="task-item">
+								<Box className="task-row">
+									<FormControlLabel
+										control={
+											<Box className="task-check">
+												<Checkbox
+													checked={task.status === "Completed"}
+													onChange={() =>
+														handleCheckboxChange(task.task_id, task.status)
+													}
+													className="task-checkbox"
+													sx={{ padding: 0 }}
+												/>
+											</Box>
+										}
+										label={<Box className="task-title">{task.title} by</Box>}
+									/>
+
+									<Box className="task-due-date-pending">
+										{formatDueDate(task.due_date)}
+									</Box>
+
+									<Box className="task-edit">
+										<Button
+											className="task-edit-button"
+											variant="text"
+											color="primary"
+											onClick={() => handleEditClick(task)}
+											startIcon={<EditIcon />}
 										/>
 									</Box>
-								}
-								label={
-									<Box className="task-pending">
-										<Box className="task-data">
-											{task.title} by{" "}
-											<Box className="task-due-date-pending">
-												{formatDueDate(task.due_date)}
+								</Box>
+
+								{taskSubtasks.length > 0 && (
+									<Box className="task-subtasks">
+										{taskSubtasks.map((subtask) => (
+											<Box key={subtask.subtask_id} className="subtask-item">
+												<FormControlLabel
+													control={
+														<Checkbox
+															checked={subtask.status === "Completed"}
+															onChange={() =>
+																handleSubtaskCheckboxChange(
+																	subtask.subtask_id,
+																	subtask.status
+																)
+															}
+															className="subtask-checkbox"
+															sx={{ padding: 0 }}
+														/>
+													}
+													label={
+														<Box className="subtask-title">{subtask.title}</Box>
+													}
+												/>
 											</Box>
-										</Box>
-										<Box className="task-edit">
-											<Button
-												variant="outlined"
-												color="primary"
-												onClick={() => handleEditClick(task)}
-												startIcon={<EditIcon />}
-											/>
-										</Box>
+										))}
 									</Box>
-								}
-							/>
-						</Box>
-					))
+								)}
+							</Box>
+						);
+					})
 				)}
 			</Box>
 
@@ -141,11 +211,14 @@ const Home = () => {
 				color="primary"
 				aria-label="add"
 				className="floating-button"
-				onClick={handleClickOpen}
+				onClick={handleNewClick}
 				sx={{
 					position: "fixed",
 					bottom: 50,
 					right: 50,
+					"&:hover": {
+						backgroundColor: "#87b7e1",
+					},
 				}}
 			>
 				<AddIcon />
@@ -163,8 +236,8 @@ const Home = () => {
 					/>
 				</DialogContent>
 				<DialogActions className="task-dialog-actions">
-					<button className="task-dialog-cancel" onClick={handleClose}>
-						Cancel
+					<button className="task-dialog-close" onClick={handleClose}>
+						Close
 					</button>
 				</DialogActions>
 			</Dialog>

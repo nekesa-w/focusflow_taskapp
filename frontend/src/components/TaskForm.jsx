@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import {
+	TextField,
+	Divider,
+	Button,
+	Box,
+	Typography,
+	FormControl,
+	Select,
+	MenuItem,
+	InputLabel,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+} from "@mui/material";
 import AxiosInstance from "./AxiosInstance";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 
 const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 	const [newTask, setNewTask] = useState({
@@ -12,10 +27,17 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 	});
 
 	const [error, setError] = useState("");
+	const [success, setSuccess] = useState("");
 	const [taskId, setTaskId] = useState(null);
-	const [showSubtaskOptions, setShowSubtaskOptions] = useState(false);
-	const [generatedTaskInfo, setGeneratedTaskInfo] = useState(null);
+	const [taskTitleDisplay, setTaskTitleDisplay] = useState(null);
+	const [taskDueDateDisplay, setTaskDueDateDisplay] = useState(null);
 	const [subtaskCount, setSubtaskCount] = useState(2);
+	const [detailLevel, setDetailLevel] = useState("low");
+	const [isGeneratingSubtasks, setIsGeneratingSubtasks] = useState(false);
+	const [generatedTaskInfo, setGeneratedTaskInfo] = useState(null);
+	const [openSubtaskDialog, setOpenSubtaskDialog] = useState(false);
+
+	const [subtasks, setSubtasks] = useState([]);
 
 	const userId = localStorage.getItem("UserId");
 
@@ -29,6 +51,11 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				status: task.status || "Pending",
 			});
 			setTaskId(task.task_id);
+			setTaskTitleDisplay(task.title);
+			setTaskDueDateDisplay(task.due_date);
+			if (task.subtasks && task.subtasks.length > 0) {
+				setSubtasks(task.subtasks);
+			}
 		}
 	}, [task]);
 
@@ -40,6 +67,11 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 			return;
 		}
 
+		if (!userId) {
+			setError("User ID is not available. Please log in.");
+			return;
+		}
+
 		try {
 			const response = await AxiosInstance.post("tasks/", {
 				title: newTask.title,
@@ -47,38 +79,296 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				user: userId,
 			});
 
-			onTaskCreated(response.data);
+			if (onTaskCreated) {
+				onTaskCreated(response.data);
+			}
+
 			setNewTask({
 				title: "",
 				due_date: "",
 				subtaskTitle: "",
 				status: "Pending",
 			});
+
 			setTaskId(response.data.task_id);
+			window.location.reload();
+		} catch (error) {
+			console.error("Error creating task:", error);
+
+			if (error.response) {
+				console.error("Response Error:", error.response);
+
+				const errorMessage =
+					error.response?.data?.detail ||
+					"An error occurred while creating the task.";
+
+				if (error.response?.data?.detail) {
+					console.error("Backend error:", error.response?.data?.detail);
+				}
+
+				setError(errorMessage);
+			} else if (error.request) {
+				console.error("No response from server:", error.request);
+				setError("No response from the server. Please try again.");
+			} else {
+				console.error("Error during request setup:", error.message);
+				setError(
+					"An error occurred while creating the task. Please try again."
+				);
+			}
+		}
+	};
+
+	const handleUpdateTask = async () => {
+		setError("");
+		setSuccess("");
+
+		if (!newTask.title || !newTask.due_date) {
+			setError("Please fill in both the title and due date.");
+			return;
+		}
+
+		try {
+			const response = await AxiosInstance.put(`tasks/${taskId}/`, {
+				title: newTask.title,
+				due_date: newTask.due_date,
+				status: newTask.status,
+			});
+
+			onTaskUpdated(response.data);
+
+			if (subtasks && subtasks.length > 0) {
+				const updatedSubtasks = subtasks.map((subtask) => ({
+					...subtask,
+					task: taskId,
+					status: subtask.status || "Pending",
+				}));
+
+				for (const updatedSubtask of updatedSubtasks) {
+					await AxiosInstance.put(
+						`/api/subtasks/${updatedSubtask.subtask_id}/`,
+						{
+							title: updatedSubtask.title,
+							status: updatedSubtask.status,
+						}
+					);
+				}
+
+				setSuccess("Task and subtasks updated successfully!");
+			} else {
+				setSuccess("Task updated successfully!");
+			}
+
+			setNewTask({
+				title: response.data.title,
+				due_date: response.data.due_date,
+				subtaskTitle: "",
+				status: response.data.status,
+			});
+			setTaskId(response.data.task_id);
+			window.location.reload();
+		} catch (error) {
+			console.error("Error updating task:", error);
+			setError("An error occurred while updating the task. Please try again.");
+		}
+	};
+
+	const handleDeleteTask = async () => {
+		setError("");
+
+		if (!taskId) {
+			setError("No task selected for deletion.");
+			return;
+		}
+
+		try {
+			if (subtasks && subtasks.length > 0) {
+				for (const subtask of subtasks) {
+					await AxiosInstance.delete(`/api/subtasks/${subtask.subtask_id}/`);
+				}
+			}
+			await AxiosInstance.delete(`tasks/${taskId}/`);
+			setTaskId(null);
+			setNewTask({
+				title: "",
+				due_date: "",
+				subtaskTitle: "",
+				status: "Pending",
+			});
+			onTaskUpdated(null);
+			onTaskUpdated((prevTasks) =>
+				prevTasks.filter((task) => task.task_id !== taskId)
+			);
+			window.location.reload();
+		} catch (error) {
+			console.error("Error deleting task:", error);
+			setError("An error occurred while deleting the task. Please try again.");
+		}
+	};
+
+	const handleCreateTaskAndAddSubtasks = async () => {
+		setError("");
+
+		if (!newTask.title || !newTask.due_date) {
+			setError(
+				"Please provide a valid task title and due date before creating subtasks."
+			);
+			return;
+		}
+
+		try {
+			const response = await AxiosInstance.post("tasks/", {
+				title: newTask.title,
+				due_date: newTask.due_date,
+				user: userId,
+			});
+
+			if (onTaskCreated) {
+				onTaskCreated(response.data);
+			}
+
+			setNewTask({
+				title: "",
+				due_date: "",
+				subtaskTitle: "",
+				status: "Pending",
+			});
+
+			setTaskId(response.data.task_id);
+			setTaskTitleDisplay(response.data.title);
+			setTaskDueDateDisplay(response.data.due_date);
+			setOpenSubtaskDialog(true);
 		} catch (error) {
 			console.error("Error creating task:", error);
 			setError("An error occurred while creating the task. Please try again.");
 		}
 	};
 
-	const handleSubtaskButtonClick = () => {
+	const handleUpdateTaskAndAddSubtasks = async () => {
+		setError("");
+
 		if (!newTask.title || !newTask.due_date) {
-			setError("Please fill in both the title and due date.");
+			setError(
+				"Please provide a valid task title and due date before creating subtasks."
+			);
 			return;
 		}
-		setShowSubtaskOptions(true);
+
+		try {
+			const response = await AxiosInstance.put(`tasks/${taskId}/`, {
+				title: newTask.title,
+				due_date: newTask.due_date,
+				status: newTask.status,
+			});
+
+			onTaskUpdated(response.data);
+
+			if (subtasks && subtasks.length > 0) {
+				for (const subtask of subtasks) {
+					await AxiosInstance.delete(`/api/subtasks/${subtask.subtask_id}/`);
+				}
+				setSubtasks([]);
+			}
+
+			setNewTask({
+				title: response.data.title,
+				due_date: response.data.due_date,
+				subtaskTitle: "",
+				status: response.data.status,
+			});
+
+			setTaskId(response.data.task_id);
+			setTaskTitleDisplay(response.data.title);
+			setTaskDueDateDisplay(response.data.due_date);
+
+			setOpenSubtaskDialog(true);
+		} catch (error) {
+			console.error("Error updating task:", error);
+			setError(
+				"An error occurred while saving the updated task. Please try again."
+			);
+		}
 	};
 
-	const handleMotivateMeClick = () => {
-		if (!newTask.title || !newTask.due_date) {
-			setError("Please fill in both the title and due date.");
+	const handleGenerateSubtasks = async () => {
+		setError("");
+
+		setIsGeneratingSubtasks(true);
+
+		try {
+			const response = await AxiosInstance.post(
+				"api/tasks/generate-subtasks/",
+				{
+					task_title: taskTitleDisplay,
+					num_subtasks: subtaskCount,
+					detail_level: detailLevel,
+				}
+			);
+
+			if (response.data && response.data.subtasks) {
+				setGeneratedTaskInfo({
+					title: taskTitleDisplay,
+					due_date: taskDueDateDisplay,
+					subtasks: response.data.subtasks,
+				});
+				console.log("Subtasks generated successfully:", response.data.subtasks);
+			} else {
+				console.error("No subtasks found in the response data.");
+				setError("Subtasks not found in the response.");
+			}
+		} catch (error) {
+			console.error(
+				"Error occurred while generating subtasks:",
+				error.message || error
+			);
+			setError(error.message || "An unknown error occurred.");
+		} finally {
+			setIsGeneratingSubtasks(false);
+		}
+	};
+
+	const handleSaveTaskSubtasks = async () => {
+		setError("");
+		setSuccess("");
+
+		if (
+			!taskId ||
+			!generatedTaskInfo?.subtasks ||
+			generatedTaskInfo.subtasks.length === 0
+		) {
+			setError("Please ensure the task has a valid ID and subtasks.");
 			return;
 		}
-		setGeneratedTaskInfo({ title: newTask.title, count: subtaskCount });
-		handleCreateTask();
-		console.log(
-			`Generating ${subtaskCount} motivational subtasks for the task titled "${newTask.title}".`
-		);
+
+		try {
+			const subtasksData = generatedTaskInfo.subtasks.map((subtaskTitle) => ({
+				title: subtaskTitle,
+				task: taskId,
+				status: "Pending",
+			}));
+
+			const response = await AxiosInstance.post("/api/subtasks/", subtasksData);
+
+			if (response.status === 201) {
+				console.log("Subtasks saved successfully:", response.data);
+				setSuccess("");
+				("Subtasks saved successfully!");
+				setOpenSubtaskDialog(false);
+				window.location.reload();
+			} else {
+				console.error("Failed to save subtasks:", response.data);
+				setError("Failed to save subtasks. Please try again.");
+			}
+		} catch (error) {
+			console.error("Error saving subtasks:", error);
+			setError(
+				"An error occurred while saving the subtasks. Please try again."
+			);
+		}
+	};
+
+	const handleCloseDialog = () => {
+		setOpenSubtaskDialog(false);
 	};
 
 	return (
@@ -89,7 +379,13 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				</Typography>
 			)}
 
-			<Box className="form-input">
+			{success && (
+				<Typography variant="body1" color="success" sx={{ marginBottom: 2 }}>
+					{success}
+				</Typography>
+			)}
+
+			<Box className="form-input" sx={{ marginBottom: 1 }}>
 				<TextField
 					label="Task Title"
 					variant="outlined"
@@ -98,7 +394,7 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 					onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
 				/>
 			</Box>
-			<Box className="form-input">
+			<Box className="form-input" sx={{ marginBottom: 1 }}>
 				<TextField
 					label="Due Date"
 					variant="outlined"
@@ -112,56 +408,210 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				/>
 			</Box>
 
-			<Box className="form-input">
-				<TextField
-					label="Status"
-					variant="outlined"
-					fullWidth
-					value={newTask.status}
-					disabled
-					InputProps={{
-						readOnly: true,
-					}}
-				/>
-			</Box>
+			{/* Display and edit subtasks if they exist */}
+			{subtasks && subtasks.length > 0 && (
+				<Box className="subtask-section">
+					{subtasks.map((subtask, index) => (
+						<Box key={subtask.subtask_id} sx={{ marginBottom: 4 }}>
+							<TextField
+								label={`Subtask ${index + 1} Title`}
+								variant="outlined"
+								fullWidth
+								value={subtask.title}
+								onChange={(e) => {
+									const updatedSubtasks = [...subtasks];
+									updatedSubtasks[index].title = e.target.value;
+									setSubtasks(updatedSubtasks);
+								}}
+							/>
+						</Box>
+					))}
+				</Box>
+			)}
+
+			{/* Only show the note when editing an existing task */}
+			{taskId && (
+				<Typography variant="body1" color="error" sx={{ marginBottom: 1 }}>
+					Note: Pressing "Edit Task and Add Subtasks" removes all current
+					subtasks
+				</Typography>
+			)}
 
 			<Box className="form-action">
-				<Button
-					variant="contained"
-					onClick={task ? handleCreateTask : handleCreateTask}
-				>
-					{task ? "Update Task" : "Create Task"}
-				</Button>
+				{taskId ? (
+					<>
+						<Button variant="contained" onClick={handleUpdateTask}>
+							Edit Task
+						</Button>
 
-				{!task && (
-					<Button
-						variant="outlined"
-						sx={{ marginLeft: 2 }}
-						onClick={handleSubtaskButtonClick}
-					>
-						Generate Subtasks
-					</Button>
+						<Button
+							variant="outlined"
+							sx={{ marginLeft: 1 }}
+							onClick={handleUpdateTaskAndAddSubtasks}
+						>
+							Edit Task and Add Subtasks
+						</Button>
+
+						<Button
+							variant="contained"
+							color="error"
+							sx={{ marginLeft: 1 }}
+							onClick={handleDeleteTask}
+						>
+							Delete Task
+						</Button>
+					</>
+				) : (
+					<>
+						<Button variant="contained" onClick={handleCreateTask}>
+							Create Task
+						</Button>
+
+						<Button
+							variant="outlined"
+							sx={{ marginLeft: 2 }}
+							onClick={handleCreateTaskAndAddSubtasks}
+						>
+							Create Task and Add Subtasks
+						</Button>
+					</>
 				)}
 			</Box>
 
-			{showSubtaskOptions && (
-				<Box sx={{ marginTop: 2, textAlign: "center" }}>
-					<TextField
-						label="How many subtasks to create?"
-						type="number"
-						variant="outlined"
-						value={subtaskCount}
-						onChange={(e) =>
-							setSubtaskCount(Math.max(2, Math.min(10, Number(e.target.value))))
-						}
-						sx={{ marginBottom: 2 }}
-					/>
+			{/* Dialog for Creating Subtasks */}
+			<Dialog
+				open={openSubtaskDialog}
+				onClose={handleCloseDialog}
+				className="task-dialog"
+			>
+				<DialogTitle className="task-dialog-title">Create Subtasks</DialogTitle>
 
-					<Button variant="contained" onClick={handleMotivateMeClick}>
-						Motivate Me
-					</Button>
-				</Box>
-			)}
+				<DialogContent className="task-dialog-content">
+					<Typography
+						variant="body1"
+						sx={{ marginBottom: 2, textAlign: "left" }}
+						className="task-dialog-desc"
+					>
+						Break your task into smaller steps. Each step is framed with
+						positive, motivating language to keep you inspired. Whether simple
+						or detailed, every task will remind you of your progress and bring
+						you closer to your goal
+					</Typography>
+					<Divider sx={{ marginBottom: 2, borderColor: "#2d74b2" }} />
+					<Typography
+						variant="h6"
+						className="task-dialog-titlesmall"
+						sx={{ marginBottom: 2, textAlign: "center", color: "#2d74b2" }}
+					>
+						Customize your subtasks
+					</Typography>
+					<Box sx={{ marginBottom: 3, textAlign: "center" }}>
+						<Typography variant="body1">
+							Your Task Title is: {taskTitleDisplay}
+						</Typography>
+						<Typography variant="body1">
+							Your Due Date is: {taskDueDateDisplay}
+						</Typography>
+					</Box>
+
+					<FormControl fullWidth sx={{ marginBottom: 2 }}>
+						<InputLabel>How many subtasks do you want?</InputLabel>
+						<Select
+							label="How many subtasks do you want?"
+							value={subtaskCount}
+							onChange={(e) =>
+								setSubtaskCount(
+									Math.max(2, Math.min(10, Number(e.target.value)))
+								)
+							}
+						>
+							{[...Array(9)].map((_, index) => (
+								<MenuItem key={index} value={index + 2}>
+									{index + 2}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+
+					<FormControl fullWidth sx={{ marginBottom: 2 }}>
+						<InputLabel>How detailed should each subtask be?</InputLabel>
+						<Select
+							label="How detailed should each subtask be?"
+							value={detailLevel}
+							onChange={(e) => setDetailLevel(e.target.value)}
+						>
+							<MenuItem value="low">Low</MenuItem>
+							<MenuItem value="high">High</MenuItem>
+						</Select>
+					</FormControl>
+					<DialogActions className="task-dialog-actions">
+						<Button variant="contained" onClick={handleGenerateSubtasks}>
+							Motivate Me <AutoFixHighIcon sx={{ marginLeft: 1 }} />
+						</Button>
+					</DialogActions>
+					{/* Displaying "Subtasks are being generated..." below the button */}
+					{isGeneratingSubtasks && (
+						<Box sx={{ margin: 1, textAlign: "center" }}>
+							<Typography variant="body1" color="textSecondary">
+								Subtasks are being generated...
+							</Typography>
+						</Box>
+					)}
+					{/* Displaying the generated subtasks in a box */}
+					{!isGeneratingSubtasks && generatedTaskInfo?.subtasks && (
+						<Box className="task-dialog-task-subtask">
+							<Typography
+								variant="h6"
+								sx={{ textAlign: "center", marginBottom: 2 }}
+							>
+								Task: {generatedTaskInfo.title}
+							</Typography>
+							<Typography
+								variant="body1"
+								sx={{ textAlign: "center", marginBottom: 2 }}
+							>
+								Due Date: {generatedTaskInfo.due_date}
+							</Typography>
+
+							<Box sx={{ paddingLeft: 2 }}>
+								{generatedTaskInfo.subtasks.map((subtask, index) => (
+									<Typography
+										key={index}
+										variant="body1"
+										sx={{ marginBottom: 1 }}
+									>
+										{index + 1}. {subtask}
+									</Typography>
+								))}
+							</Box>
+
+							{/* Create Task Save Subtask buttons */}
+							<Box
+								sx={{
+									marginTop: 2,
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Button
+									variant="contained"
+									color="primary"
+									sx={{ alignItems: "center" }}
+									onClick={handleSaveTaskSubtasks}
+								>
+									Save Task with Subtasks
+								</Button>
+							</Box>
+						</Box>
+					)}
+				</DialogContent>
+				<DialogActions className="task-dialog-actions">
+					<button className="task-dialog-close" onClick={handleCloseDialog}>
+						Close
+					</button>
+				</DialogActions>
+			</Dialog>
 		</Box>
 	);
 };

@@ -1,16 +1,14 @@
 from django.shortcuts import render
+from django.utils.timezone import now
 from rest_framework import viewsets, permissions
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model, authenticate
 from knox.models import AuthToken
-from datetime import datetime
 from rest_framework.decorators import action
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
-import re
 from rest_framework import status
+from .task_utils import generate_subtasks
 
 User = get_user_model()
 
@@ -24,8 +22,12 @@ class LoginViewset(viewsets.ViewSet):
         if serializer.is_valid():
             email = serializer.validated_data["email"]
             password = serializer.validated_data["password"]
+
             user = authenticate(request, username=email, password=password)
             if user:
+                user.last_login = now()
+                user.save(update_fields=["last_login"])
+
                 _, token = AuthToken.objects.create(user)
                 return Response(
                     {
@@ -36,12 +38,16 @@ class LoginViewset(viewsets.ViewSet):
                             "email": user.email,
                         },
                         "token": token,
-                    }
+                    },
+                    status=status.HTTP_200_OK,
                 )
             else:
-                return Response({"error": "Invalid credentials"}, status=401)
+                return Response(
+                    {"error": "Invalid credentials"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegisterViewset(viewsets.ViewSet):
@@ -80,11 +86,29 @@ class TaskViewset(viewsets.ViewSet):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
+        title = request.data.get("title")
         due_date = request.data.get("due_date")
+
+        if not title:
+            return Response(
+                {"detail": "Task title is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not due_date:
             return Response(
-                {"detail": "Due date is required."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Due date is required."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        subtasks_data = request.data.get("subtasks", [])
+        if subtasks_data:
+            for subtask in subtasks_data:
+                if not subtask.get("title"):
+                    return Response(
+                        {"detail": "Subtask title is required."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -136,43 +160,38 @@ class TaskViewset(viewsets.ViewSet):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=["post"], url_path="generate-subtasks")
-    def generate_subtasks(self, request):
+    def generate_subtasks_action(self, request):
         task_title = request.data.get("task_title")
-        num_subtasks = int(request.data.get("num_subtasks", 2))  # Default to 2
+        num_subtasks = request.data.get("num_subtasks")
+        detail_level = request.data.get("detail_level")
 
-        if not task_title:
+        if not task_title or num_subtasks <= 0 or not detail_level:
             return Response(
-                {"detail": "Task title is required."},
+                {
+                    "detail": "Task title, number of subtasks, and detail level are required."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        model_name = "your-model-path"  # Example path to model
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForCausalLM.from_pretrained(model_name)
+        try:
+            subtasks = generate_subtasks(task_title, num_subtasks, detail_level)
+            return Response({"subtasks": subtasks}, status=status.HTTP_200_OK)
 
-        # Generate subtasks logic
-        def generate_subtasks(task_description, model, tokenizer, num_subtasks):
-            prompt = (
-                f"Break down the task '{task_description}' into {num_subtasks} steps."
+        except ValueError as e:
+            return Response(
+                {"detail": f"Invalid input: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            inputs = tokenizer(
-                prompt, return_tensors="pt", padding=True, truncation=True
+        except RuntimeError as e:
+            return Response(
+                {"detail": f"Model error: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-            with torch.no_grad():
-                outputs = model.generate(
-                    **inputs,
-                    num_return_sequences=1,
-                    max_length=256,
-                    no_repeat_ngram_size=2,
-                )
-
-            generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-            subtasks = generated_text.split("\n")
-            return subtasks[:num_subtasks]
-
-        subtasks = generate_subtasks(task_title, model, tokenizer, num_subtasks)
-        return Response({"subtasks": subtasks}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"detail": "An unknown error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class SubtaskViewset(viewsets.ViewSet):
@@ -190,11 +209,18 @@ class SubtaskViewset(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = SubtaskSerializer(data=request.data)
-        if serializer.is_valid():
-            subtask = serializer.save()
-            return Response(SubtaskSerializer(subtask).data, status=201)
-        return Response(serializer.errors, status=400)
+        subtasks_data = request.data
+        subtasks = []
+
+        for subtask_data in subtasks_data:
+            serializer = SubtaskSerializer(data=subtask_data)
+            if serializer.is_valid():
+                subtask = serializer.save()
+                subtasks.append(subtask)
+            else:
+                return Response(serializer.errors, status=400)
+
+        return Response(SubtaskSerializer(subtasks, many=True).data, status=201)
 
     def retrieve(self, request, pk=None):
         try:

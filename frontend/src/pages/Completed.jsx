@@ -37,6 +37,7 @@ const Completed = () => {
 
 	const handleCheckboxChange = async (taskId, currentStatus) => {
 		const newStatus = currentStatus === "Pending" ? "Completed" : "Pending";
+		const updatedTask = { status: newStatus, updated_at: new Date() };
 
 		setTasks((prevTasks) =>
 			prevTasks.map((task) =>
@@ -45,7 +46,7 @@ const Completed = () => {
 		);
 
 		try {
-			await AxiosInstance.put(`tasks/${taskId}/`, { status: newStatus });
+			await AxiosInstance.put(`tasks/${taskId}/`, updatedTask);
 		} catch (error) {
 			console.error("Error updating task status:", error);
 			setTasks((prevTasks) =>
@@ -56,74 +57,80 @@ const Completed = () => {
 		}
 	};
 
-	const handleEditClick = (task) => {
-		setCurrentTask(task);
-		setOpen(true);
-	};
-
 	const handleTaskCreated = (newTask) => {
 		setTasks((prevTasks) => [newTask, ...prevTasks]);
 	};
 
 	const handleTaskUpdated = (updatedTask) => {
-		setTasks((prevTasks) =>
-			prevTasks.map((task) =>
-				task.task_id === updatedTask.task_id ? updatedTask : task
-			)
-		);
+		if (updatedTask === null) {
+			setTasks((prevTasks) =>
+				prevTasks.filter((task) => task.task_id !== currentTask.task_id)
+			);
+		} else {
+			setTasks((prevTasks) =>
+				prevTasks.map((task) =>
+					task.task_id === updatedTask.task_id ? updatedTask : task
+				)
+			);
+		}
 	};
 
 	const completedTasks = tasks.filter((task) => task.status === "Completed");
 
-	const handleClickOpen = () => {
+	const handleNewClick = () => {
+		setCurrentTask(null);
+		setOpen(true);
+	};
+
+	const handleEditClick = (task) => {
+		setCurrentTask(task);
 		setOpen(true);
 	};
 
 	const handleClose = () => {
-		// Clear the current task when closing
-		setCurrentTask(null);
 		setOpen(false);
 	};
 
 	return (
 		<Container className="task-container">
-			<Box className="task-title">Done</Box>
+			<Box className="task-page-title">Done</Box>
 			<Box className="task-box">
 				{completedTasks.length === 0 ? (
 					<Box className="no-tasks">No tasks available</Box>
 				) : (
 					completedTasks.map((task) => (
 						<Box key={task.task_id} className="task-item">
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={task.status === "Completed"}
-										onChange={() =>
-											handleCheckboxChange(task.task_id, task.status)
-										}
-										className="task-checkbox"
-										sx={{ padding: 0 }}
-									/>
-								}
-								label={
-									<Box className="task-completed">
-										<Box className="task-data">
-											{task.title} by{" "}
-											<Box className="task-due-date-completed">
-												{formatDueDate(task.due_date)}
-											</Box>
-										</Box>
-										<Box className="task-edit">
-											<Button
-												variant="outlined"
-												color="primary"
-												onClick={() => handleEditClick(task)}
-												startIcon={<EditIcon />}
+							<Box className="task-row">
+								<FormControlLabel
+									control={
+										<Box className="task-check">
+											<Checkbox
+												checked={task.status === "Completed"}
+												onChange={() =>
+													handleCheckboxChange(task.task_id, task.status)
+												}
+												className="task-checkbox"
+												sx={{ padding: 0 }}
 											/>
 										</Box>
-									</Box>
-								}
-							/>
+									}
+									label={<Box className="task-title">{task.title} by</Box>}
+								/>
+
+								<Box className="task-due-date-completed">
+									{formatDueDate(task.due_date)}
+								</Box>
+
+								<Box className="task-edit">
+									<Button
+										className="task-edit-button"
+										variant="text"
+										color="primary"
+										onClick={() => handleEditClick(task)}
+										startIcon={<EditIcon />}
+									/>
+								</Box>
+							</Box>
 						</Box>
 					))
 				)}
@@ -133,11 +140,14 @@ const Completed = () => {
 				color="primary"
 				aria-label="add"
 				className="floating-button"
-				onClick={handleClickOpen}
+				onClick={handleNewClick}
 				sx={{
 					position: "fixed",
 					bottom: 50,
 					right: 50,
+					"&:hover": {
+						backgroundColor: "#87b7e1",
+					},
 				}}
 			>
 				<AddIcon />
@@ -155,8 +165,8 @@ const Completed = () => {
 					/>
 				</DialogContent>
 				<DialogActions className="task-dialog-actions">
-					<button className="task-dialog-cancel" onClick={handleClose}>
-						Cancel
+					<button className="task-dialog-close" onClick={handleClose}>
+						Close
 					</button>
 				</DialogActions>
 			</Dialog>
