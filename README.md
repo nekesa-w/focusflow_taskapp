@@ -50,8 +50,8 @@ Before running the project, ensure you have the following installed:
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd project/
+   git clone https://github.com/nekesa-w/taskapp
+   cd taskapp/
    ```
 
 2. **Build and start all services using Docker Compose**:
@@ -64,7 +64,7 @@ Before running the project, ensure you have the following installed:
 3. **Access the Services**:
 
    - **Backend (Django)**: Open your browser and navigate to `http://localhost:8000` for the backend.
-   - **Frontend (React/Vite)**: Open `http://localhost:3000` to access the frontend.
+   - **Frontend (React/Vite)**: Open `http://localhost:5173` to access the frontend.
    - **LLM Module (Jupyter Notebook)**: Access Jupyter at `http://localhost:8888` (no authentication required).
    - **MySQL Database**: The MySQL database is accessible at `localhost:3306`.
 
@@ -81,69 +81,9 @@ Before running the project, ensure you have the following installed:
 The `docker-compose.yml` file contains the configuration to spin up four services:
 
 1. **Backend**: Django application running on port `8000`.
-2. **Frontend**: React application (served via Vite) running on port `3000`.
-3. **LLM**: A Python container that runs Jupyter Notebook, which allows interaction with the `SmolLM2-135M-INSTRUCT` model, accessible on port `8888`.
-4. **MySQL**: MySQL database running on port `3306`, configured with `rootpassword` and the `mydatabase` schema.
-
-Here’s the configuration:
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build:
-      context: ./backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app
-    environment:
-      - DB_HOST=database
-      - DB_PORT=3306
-      - DB_NAME=mydatabase
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-    depends_on:
-      - database
-
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "3000:5173"
-    volumes:
-      - ./frontend:/app
-    environment:
-      - VITE_API_URL=http://backend:8000   # For frontend to interact with backend
-
-  llm:
-    build:
-      context: ./llm
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./llm:/app
-    environment:
-      - MERGED_MODEL_PATH=/app/merged_model   # Path to merged model
-    depends_on:
-      - backend
-
-  database:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: root
-      MYSQL_PASSWORD: rootpassword
-    volumes:
-      - db_data:/var/lib/mysql
-
-volumes:
-  db_data:
-```
+2. **Frontend**: React application (served via Vite) running on port `5173`.
+3. **LLM**: Jupyter Notebook file, which allows interaction with the `SmolLM2-135M-INSTRUCT` model, accessible on port `8888`.
+4. **MySQL**: MySQL database running on port `3306`, configured with root, no password and the `taskapp` schema.
 
 ---
 
@@ -155,13 +95,16 @@ Ensure that your Django `settings.py` file is configured to use MySQL by setting
 import os
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'mydatabase'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'rootpassword'),
-        'HOST': os.getenv('DB_HOST', 'database'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "taskapp",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET default_storage_engine=INNODB",
+        },
     }
 }
 ```
@@ -170,7 +113,7 @@ DATABASES = {
 
 ## Running Jupyter Notebook for LLM
 
-The LLM module is set up with Jupyter Notebook running on port `8888`. This allows users to interact with the **SmolLM2-135M-INSTRUCT** model, break down tasks, and experiment with the model directly.
+The LLM module is set up with Jupyter Notebook running on port `8888`. This allows users to interact with the fine-tuned **SmolLM2-135M-INSTRUCT** model, break down tasks, and experiment with the model directly.
 
 To interact with the Jupyter notebook:
 
