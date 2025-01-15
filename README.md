@@ -5,10 +5,10 @@ A web-based task management app designed to assist users, particularly those wit
 
 ## Features
 
-- **Task Management**: Create, update, and track tasks.
-- **Task Breakdown**: Automatically generate sub-tasks based on a given task using AI (SmolLM2-135M-INSTRUCT).
+- **Task Management**: Create, update, delete and track tasks.
+- **Task Breakdown**: Automatically generate sub-tasks based on a given task using a LLM (SmolLM2-135M-INSTRUCT).
 - **User-Friendly Interface**: Simple and intuitive frontend built with React.
-- **AI Integration**: Uses a custom-trained language model to break down complex tasks.
+- **LLM Integration**: Uses a custom-trained language model to break down complex tasks.
 - **MySQL Database**: Stores user data and tasks.
 
 ---
