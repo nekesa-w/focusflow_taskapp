@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=taskapp
+      - DB_USER=root
+      - DB_PASSWORD=
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://backend:8000
+
+  llm:
+    build:
+      context: ./llm
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./llm:/app
+    environment:
+      - MERGED_MODEL_PATH=/llm/merged_model
+    depends_on:
+      - backend
+
+  database:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: taskapp
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
