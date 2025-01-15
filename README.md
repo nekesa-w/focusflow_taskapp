@@ -3,171 +3,182 @@ A web-based task management app designed to assist users, particularly those wit
 
 ---
 
-## Table of Contents
-
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Hardware Requirements](#hardware-requirements)
-- [Software Requirements](#software-requirements)
-- [Setup and Installation](#setup-and-installation)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
 ## Features
 
-- **Task Breakdown**: Automatically breaks down complex tasks into smaller, actionable sub-tasks using LLM model.
-- **Task Creation and Management**: Easily create tasks and assign due dates. Keep track of progress and mark tasks as complete.
-- **Subtask Organization**: Tasks are divided into subtasks, allowing users to focus on one small step at a time.
-- **User Authentication**: Secure login and registration using token-based authentication.
-- **Intuitive User Interface**: Clean, responsive design built with **React** and **Material UI**, ensuring a pleasant user experience.
-
----
-
-## Technologies Used
-
-### **Frontend**:
-- **React 18.3.1** with **Vite 6.0.6**: For fast, modern front-end development.
-- **Material UI 6.3.0**: For ready-to-use UI components following Google’s Material Design principles.
-- **React Router DOM 7.1.1**: To manage client-side routing for smooth page navigation.
-- **Axios 1.7.9**: To make HTTP requests to the backend.
-- **CORS 4.6.0**: For handling cross-origin requests between the frontend and backend.
-
-### **Backend**:
-- **Django 5.1.4**: Web framework used for creating the backend API.
-- **Django REST Framework 3.15**: For building RESTful APIs.
-- **Knox 5.0.2**: Token-based authentication system for secure login.
-- **MariaDB 1.4.4**: Relational database for storing user and task data.
-
-### **Machine Learning**:
-- **SmolLM2-135M-INSTRUCT**: The LLM model used for breaking down tasks into smaller, actionable sub-tasks based on user input.
-
----
-
-## Hardware Requirements
-
-- **Processor**: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, 4 cores, 8 logical processors.
-- **Memory**: 8GB RAM for smooth development and multitasking.
-- **Storage**: 100GB of available disk space for storing files, libraries, datasets, and backups.
-- **Internet Connection**: A stable broadband connection to access APIs, libraries, and hosting services.
-- **Graphics Processing Unit (GPU)**: NVIDIA GeForce GTX 1650 or equivalent for accelerating machine learning tasks.
-
----
-
-## Software Requirements
-
-- **Operating System**: Windows 11 (or equivalent Linux/macOS).
-- **Development Environment**: Visual Studio Code (VS Code) 1.96.2 for code editing.
-- **Web Server**: Apache 2.4.58 for serving the web application.
-- **Package Manager**: `pip 24.3.1` (Python), `npm` for JavaScript packages.
-- **Backend Framework**: Django 5.1.4 with Django REST Framework 3.15.
-- **Machine Learning Tools**: Jupyter Notebooks and Google Colab for model training.
-
----
-
-## Setup and Installation
-
-### Frontend:
-1. Clone the repository:  
-   `git clone <repository-url>`
-   
-2. Navigate to the front-end directory:
-   ```bash
-   cd frontend
-   ```
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-### Backend:
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-
-2. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Apply migrations to set up the database:
-   ```bash
-   python manage.py migrate
-   ```
-
-5. Start the Django server:
-   ```bash
-   python manage.py runserver
-   ```
+- **Task Management**: Create, update, and track tasks.
+- **Task Breakdown**: Automatically generate sub-tasks based on a given task using AI (SmolLM2-135M-INSTRUCT).
+- **User-Friendly Interface**: Simple and intuitive frontend built with React.
+- **AI Integration**: Uses a custom-trained language model to break down complex tasks.
+- **MySQL Database**: Stores user data and tasks.
 
 ---
 
 ## Project Structure
 
-### Frontend Structure
-- **public/**: Contains static files (e.g., logo image).
-- **src/**: Contains the core React app files.
-  - **components/**: Reusable UI components like Navbar, TaskList.
-  - **pages/**: Contains individual page components such as `Home.jsx`, `Login.jsx`.
-  - **App.jsx**: Main React component where routing is handled.
-  - **App.css**: Global styling for the app.
-
-### Backend Structure
-- **backend/**: Contains the Django project and app.
-  - **taskapp/**: The core app that handles task management.
-    - **views.py**: API views to handle task CRUD operations.
-    - **models.py**: Defines the database models for tasks and subtasks.
-    - **serializers.py**: Handles serialization of data between the backend and frontend.
-    - **urls.py**: Defines the API endpoints.
-
----
-
-## API Endpoints
-
-- **POST /api/register**: Registers a new user.
-- **POST /api/login**: Authenticates a user and returns a token.
-- **GET /api/tasks**: Retrieves the list of tasks for the authenticated user.
-- **POST /api/tasks**: Creates a new task.
-- **GET /api/tasks/{task_id}**: Retrieves a specific task’s details.
-- **POST /api/tasks/{task_id}/subtasks**: Generates and retrieves subtasks for a specific task using the **smollm2-135M-instruct** model.
-- **PUT /api/tasks/{task_id}**: Updates a task's details.
-- **DELETE /api/tasks/{task_id}**: Deletes a task.
+```
+project/
+├── backend/                    # Django backend
+│   ├── Dockerfile               # Dockerfile for the backend
+│   ├── requirements.txt         # Backend dependencies
+│   └── taskapp/                 # Django app folder
+├── frontend/                    # React frontend
+│   ├── Dockerfile               # Dockerfile for the frontend
+│   ├── package.json             # Frontend dependencies
+│   ├── package-lock.json        # Lock file for React dependencies
+│   └── public/                  # Public directory for React
+│   └── src/                     # Source code for React
+├── llm/                         # LLM model directory
+│   ├── Dockerfile               # Dockerfile for the LLM module
+│   ├── requirements.txt         # LLM module dependencies
+│   ├── merged_model/            # Contains the SmolLM2-135M-INSTRUCT model and tokenizers
+│   └── testsmol135.ipynb        # Jupyter notebook for LLM module
+└── docker-compose.yml           # Docker Compose configuration for all services
+```
 
 ---
 
-## Contributing
+## Requirements
 
-1. Fork the repository.
-2. Create a new branch:  
-   `git checkout -b feature-branch`
-3. Make your changes.
-4. Commit your changes:  
-   `git commit -m "Add feature"`
-5. Push to your forked repository:  
-   `git push origin feature-branch`
-6. Open a Pull Request to the main repository.
+Before running the project, ensure you have the following installed:
+
+- Docker
+- Docker Compose
+
+---
+
+## Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd project/
+   ```
+
+2. **Build and start all services using Docker Compose**:
+   From the root directory (where `docker-compose.yml` is located), run the following command to build and start all containers:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the Services**:
+
+   - **Backend (Django)**: Open your browser and navigate to `http://localhost:8000` for the backend.
+   - **Frontend (React/Vite)**: Open `http://localhost:3000` to access the frontend.
+   - **LLM Module (Jupyter Notebook)**: Access Jupyter at `http://localhost:8888` (no authentication required).
+   - **MySQL Database**: The MySQL database is accessible at `localhost:3306`.
+
+4. **Stop the Containers**:
+   To stop the containers, use the following command:
+   ```bash
+   docker-compose down
+   ```
+
+---
+
+## Docker Compose Configuration
+
+The `docker-compose.yml` file contains the configuration to spin up four services:
+
+1. **Backend**: Django application running on port `8000`.
+2. **Frontend**: React application (served via Vite) running on port `3000`.
+3. **LLM**: A Python container that runs Jupyter Notebook, which allows interaction with the `SmolLM2-135M-INSTRUCT` model, accessible on port `8888`.
+4. **MySQL**: MySQL database running on port `3306`, configured with `rootpassword` and the `mydatabase` schema.
+
+Here’s the configuration:
+
+```yaml
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=mydatabase
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://backend:8000   # For frontend to interact with backend
+
+  llm:
+    build:
+      context: ./llm
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./llm:/app
+    environment:
+      - MERGED_MODEL_PATH=/app/merged_model   # Path to merged model
+    depends_on:
+      - backend
+
+  database:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+```
+
+---
+
+## Backend Configuration
+
+Ensure that your Django `settings.py` file is configured to use MySQL by setting the following environment variables:
+
+```python
+import os
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'mydatabase'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'rootpassword'),
+        'HOST': os.getenv('DB_HOST', 'database'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+    }
+}
+```
+
+---
+
+## Running Jupyter Notebook for LLM
+
+The LLM module is set up with Jupyter Notebook running on port `8888`. This allows users to interact with the **SmolLM2-135M-INSTRUCT** model, break down tasks, and experiment with the model directly.
+
+To interact with the Jupyter notebook:
+
+1. Open `http://localhost:8888` in your browser.
+2. Run the `testsmol135.ipynb` notebook or other notebooks to explore the model’s capabilities.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-Feel free to adjust or expand based on additional functionality or unique aspects of your project!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
