@@ -1,4 +1,4 @@
-# FocusFlow - Task Management App
+# FocusFlow - NLP-Powered Task Management App
 FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
 
 ---
@@ -10,6 +10,18 @@ FocusFlow is a web-based task management app designed to assist users, particula
 - **User-Friendly Interface**: Simple and intuitive frontend built with React.
 - **LLM Integration**: Uses a custom-trained language model to break down complex tasks.
 - **MySQL Database**: Stores user data and tasks.
+
+---
+
+## Images
+![Login](frontend/public/images/login.png)
+![Register](frontend/public/images/register.png)
+![NewTask](frontend/public/images/newtask.png)
+![Edit](frontend/public/images/edit.png)
+![ToDo](frontend/public/images/todo.png)
+![Done](frontend/public/images/done.png)
+![Pastdue](frontend/public/images/pastdue.png)
+![ToDoSubtasks](frontend/public/images/register.png)
 
 ---
 
