@@ -1,173 +1,182 @@
-# FocusFlow
-A web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Hardware Requirements](#hardware-requirements)
-- [Software Requirements](#software-requirements)
-- [Setup and Installation](#setup-and-installation)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Contributing](#contributing)
-- [License](#license)
+# FocusFlow - NLP Powered Task Management App
+FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
 
 ---
 
 ## Features
 
-- **Task Breakdown**: Automatically breaks down complex tasks into smaller, actionable sub-tasks using LLM model.
-- **Task Creation and Management**: Easily create tasks and assign due dates. Keep track of progress and mark tasks as complete.
-- **Subtask Organization**: Tasks are divided into subtasks, allowing users to focus on one small step at a time.
-- **User Authentication**: Secure login and registration using token-based authentication.
-- **Intuitive User Interface**: Clean, responsive design built with **React** and **Material UI**, ensuring a pleasant user experience.
+- **Task Management**: Create, update, delete and track tasks.
+- **Task Breakdown**: Automatically generate sub-tasks based on a given task using a LLM (SmolLM2-135M-INSTRUCT).
+- **User-Friendly Interface**: Simple and intuitive frontend built with React.
+- **LLM Integration**: Uses a custom-trained language model to break down complex tasks.
+- **MySQL Database**: Stores user data and tasks.
 
 ---
 
-## Technologies Used
+## Images
 
-### **Frontend**:
-- **React 18.3.1** with **Vite 6.0.6**: For fast, modern front-end development.
-- **Material UI 6.3.0**: For ready-to-use UI components following Google’s Material Design principles.
-- **React Router DOM 7.1.1**: To manage client-side routing for smooth page navigation.
-- **Axios 1.7.9**: To make HTTP requests to the backend.
-- **CORS 4.6.0**: For handling cross-origin requests between the frontend and backend.
+**Home**  
 
-### **Backend**:
-- **Django 5.1.4**: Web framework used for creating the backend API.
-- **Django REST Framework 3.15**: For building RESTful APIs.
-- **Knox 5.0.2**: Token-based authentication system for secure login.
-- **MariaDB 1.4.4**: Relational database for storing user and task data.
+The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.  
+![Home](frontend/public/home.png)  
 
-### **Machine Learning**:
-- **SmolLM2-135M-INSTRUCT**: The LLM model used for breaking down tasks into smaller, actionable sub-tasks based on user input.
+**Login**  
 
----
+The user authentication page allowing registered users to securely log into FocusFlow.  
+![Login](frontend/public/login.png)  
 
-## Hardware Requirements
+**Register** 
 
-- **Processor**: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, 4 cores, 8 logical processors.
-- **Memory**: 8GB RAM for smooth development and multitasking.
-- **Storage**: 100GB of available disk space for storing files, libraries, datasets, and backups.
-- **Internet Connection**: A stable broadband connection to access APIs, libraries, and hosting services.
-- **Graphics Processing Unit (GPU)**: NVIDIA GeForce GTX 1650 or equivalent for accelerating machine learning tasks.
+The sign-up page where new users can create an account to start managing their tasks.  
+![Register](frontend/public/register.png)  
 
----
+**New Task**  
 
-## Software Requirements
+A dedicated page for users to add new tasks with deadlines, priorities, and categories.  
+![NewTask](frontend/public/newtask.png)  
 
-- **Operating System**: Windows 11 (or equivalent Linux/macOS).
-- **Development Environment**: Visual Studio Code (VS Code) 1.96.2 for code editing.
-- **Web Server**: Apache 2.4.58 for serving the web application.
-- **Package Manager**: `pip 24.3.1` (Python), `npm` for JavaScript packages.
-- **Backend Framework**: Django 5.1.4 with Django REST Framework 3.15.
-- **Machine Learning Tools**: Jupyter Notebooks and Google Colab for model training.
+**Subtasks**  
 
----
+Allows users to break down complex tasks into smaller, manageable subtasks for better organization.  
+![Subtask](frontend/public/subtasks.png)  
 
-## Setup and Installation
+**Subtask Created** 
 
-### Frontend:
-1. Clone the repository:  
-   `git clone <repository-url>`
-   
-2. Navigate to the front-end directory:
-   ```bash
-   cd frontend
-   ```
+A confirmation page showing that a subtask has been successfully added to a main task.  
+![SubtaskCreated](frontend/public/subtaskscreated.png)  
 
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+**Edit Task**  
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+Users can modify task details such as due date, priority, and description.  
+![Edit](frontend/public/edittask.png)  
 
-### Backend:
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
+**To-Do Subtask**  
 
-2. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+Displays a list of pending subtasks that need to be completed before the main task is done.  
+![ToDoSubtask](frontend/public/todosubtask.png)  
 
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Done**  
 
-4. Apply migrations to set up the database:
-   ```bash
-   python manage.py migrate
-   ```
+Shows completed tasks and subtasks, helping users track their productivity.  
+![Done](frontend/public/done.png)  
 
-5. Start the Django server:
-   ```bash
-   python manage.py runserver
-   ```
+**Past Due**  
+
+A section highlighting overdue tasks that need urgent attention.  
+![Pastdue](frontend/public/pastdue.png)  
+
 
 ---
 
 ## Project Structure
 
-### Frontend Structure
-- **public/**: Contains static files (e.g., logo image).
-- **src/**: Contains the core React app files.
-  - **components/**: Reusable UI components like Navbar, TaskList.
-  - **pages/**: Contains individual page components such as `Home.jsx`, `Login.jsx`.
-  - **App.jsx**: Main React component where routing is handled.
-  - **App.css**: Global styling for the app.
-
-### Backend Structure
-- **backend/**: Contains the Django project and app.
-  - **taskapp/**: The core app that handles task management.
-    - **views.py**: API views to handle task CRUD operations.
-    - **models.py**: Defines the database models for tasks and subtasks.
-    - **serializers.py**: Handles serialization of data between the backend and frontend.
-    - **urls.py**: Defines the API endpoints.
-
----
-
-## API Endpoints
-
-- **POST /api/register**: Registers a new user.
-- **POST /api/login**: Authenticates a user and returns a token.
-- **GET /api/tasks**: Retrieves the list of tasks for the authenticated user.
-- **POST /api/tasks**: Creates a new task.
-- **GET /api/tasks/{task_id}**: Retrieves a specific task’s details.
-- **POST /api/tasks/{task_id}/subtasks**: Generates and retrieves subtasks for a specific task using the **smollm2-135M-instruct** model.
-- **PUT /api/tasks/{task_id}**: Updates a task's details.
-- **DELETE /api/tasks/{task_id}**: Deletes a task.
+```
+project/
+├── backend/                    # Django backend
+│   ├── Dockerfile               # Dockerfile for the backend
+│   ├── requirements.txt         # Backend dependencies
+│   └── taskapp/                 # Django app folder
+├── frontend/                    # React frontend
+│   ├── Dockerfile               # Dockerfile for the frontend
+│   ├── package.json             # Frontend dependencies
+│   ├── package-lock.json        # Lock file for React dependencies
+│   └── public/                  # Public directory for React
+│   └── src/                     # Source code for React
+├── llm/                         # LLM model directory
+│   ├── Dockerfile               # Dockerfile for the LLM module
+│   ├── requirements.txt         # LLM module dependencies
+│   ├── merged_model/            # Contains the SmolLM2-135M-INSTRUCT model and tokenizers
+│   └── testsmol135.ipynb        # Jupyter notebook for LLM module
+└── docker-compose.yml           # Docker Compose configuration for all services
+```
 
 ---
 
-## Contributing
+## Requirements
 
-1. Fork the repository.
-2. Create a new branch:  
-   `git checkout -b feature-branch`
-3. Make your changes.
-4. Commit your changes:  
-   `git commit -m "Add feature"`
-5. Push to your forked repository:  
-   `git push origin feature-branch`
-6. Open a Pull Request to the main repository.
+Before running the project, ensure you have the following installed:
+
+- Docker
+- Docker Compose
+
+---
+
+## Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/nekesa-w/taskapp
+   cd taskapp/
+   ```
+
+2. **Build and start all services using Docker Compose**:
+   From the root directory (where `docker-compose.yml` is located), run the following command to build and start all containers:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the Services**:
+
+   - **Backend (Django)**: Open your browser and navigate to `http://localhost:8000` for the backend.
+   - **Frontend (React/Vite)**: Open `http://localhost:5173` to access the frontend.
+   - **LLM Module (Jupyter Notebook)**: Access Jupyter at `http://localhost:8888` (no authentication required).
+   - **MySQL Database**: The MySQL database is accessible at `localhost:3306`.
+
+4. **Stop the Containers**:
+   To stop the containers, use the following command:
+   ```bash
+   docker-compose down
+   ```
+
+---
+
+## Docker Compose Configuration
+
+The `docker-compose.yml` file contains the configuration to spin up four services:
+
+1. **Backend**: Django application running on port `8000`.
+2. **Frontend**: React application (served via Vite) running on port `5173`.
+3. **LLM**: Jupyter Notebook file, which allows interaction with the `SmolLM2-135M-INSTRUCT` model, accessible on port `8888`.
+4. **MySQL**: MySQL database running on port `3306`, configured with root, no password and the `taskapp` schema.
+
+---
+
+## Backend Configuration
+
+Ensure that your Django `settings.py` file is configured to use MySQL by setting the following environment variables:
+
+```python
+import os
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "taskapp",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "3306",
+        "OPTIONS": {
+            "init_command": "SET default_storage_engine=INNODB",
+        },
+    }
+}
+```
+
+---
+
+## Running Jupyter Notebook for LLM
+
+The LLM module is set up with Jupyter Notebook running on port `8888`. This allows users to interact with the fine-tuned **SmolLM2-135M-INSTRUCT** model, break down tasks, and experiment with the model directly.
+
+To interact with the Jupyter notebook:
+
+1. Open `http://localhost:8888` in your browser.
+2. Run the `testsmol135.ipynb` notebook or other notebooks to explore the model’s capabilities.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-Feel free to adjust or expand based on additional functionality or unique aspects of your project!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
