@@ -1,4 +1,4 @@
-# FocusFlow - NLP-Powered Task Management App
+# FocusFlow - NLP Powered Task Management App
 FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
 
 ---
@@ -14,14 +14,57 @@ FocusFlow is a web-based task management app designed to assist users, particula
 ---
 
 ## Images
-![Login](frontend/public/images/login.png)
-![Register](frontend/public/images/register.png)
-![NewTask](frontend/public/images/newtask.png)
-![Edit](frontend/public/images/edit.png)
-![ToDo](frontend/public/images/todo.png)
-![Done](frontend/public/images/done.png)
-![Pastdue](frontend/public/images/pastdue.png)
-![ToDoSubtasks](frontend/public/images/register.png)
+
+**Home**  
+
+The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.  
+![Home](frontend/public/home.png)  
+
+**Login**  
+
+The user authentication page allowing registered users to securely log into FocusFlow.  
+![Login](frontend/public/login.png)  
+
+**Register** 
+
+The sign-up page where new users can create an account to start managing their tasks.  
+![Register](frontend/public/register.png)  
+
+**New Task**  
+
+A dedicated page for users to add new tasks with deadlines, priorities, and categories.  
+![NewTask](frontend/public/newtask.png)  
+
+**Subtasks**  
+
+Allows users to break down complex tasks into smaller, manageable subtasks for better organization.  
+![Subtask](frontend/public/subtasks.png)  
+
+**Subtask Created** 
+
+A confirmation page showing that a subtask has been successfully added to a main task.  
+![SubtaskCreated](frontend/public/subtaskscreated.png)  
+
+**Edit Task**  
+
+Users can modify task details such as due date, priority, and description.  
+![Edit](frontend/public/edittask.png)  
+
+**To-Do Subtask**  
+
+Displays a list of pending subtasks that need to be completed before the main task is done.  
+![ToDoSubtask](frontend/public/todosubtask.png)  
+
+**Done**  
+
+Shows completed tasks and subtasks, helping users track their productivity.  
+![Done](frontend/public/done.png)  
+
+**Past Due**  
+
+A section highlighting overdue tasks that need urgent attention.  
+![Pastdue](frontend/public/pastdue.png)  
+
 
 ---
 
