@@ -1,4 +1,4 @@
-# FocusFlow - NLP Powered Task Management App
+# FocusFlow - AI Powered Task Management App
 FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
 
 ---
