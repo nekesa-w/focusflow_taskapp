@@ -106,7 +106,7 @@ Before running the project, ensure you have the following installed:
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/nekesa-w/focusflow_taskapp
-   cd taskapp/
+   cd focusflow_taskapp/
    ```
 
 2. **Build and start all services using Docker Compose**:
