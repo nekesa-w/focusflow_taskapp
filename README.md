@@ -1,5 +1,5 @@
-# FocusFlow
-A web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
+# FocusFlow - Task Management App
+FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
 
 ---
 
