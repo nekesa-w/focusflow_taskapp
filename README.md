@@ -1,5 +1,5 @@
-# FocusFlow - NLP Powered Task Management App
-FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates a **SmolLM2-135M-INSTRUCT** model, which uses NLP to help users deconstruct complex tasks into more digestible sub-tasks.
+# FocusFlow - AI Powered Task Management App
+FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
 
 ---
 
@@ -37,7 +37,7 @@ A dedicated page for users to add new tasks with deadlines, priorities, and cate
 
 **Subtasks**  
 
-Allows users to break down complex tasks into smaller, manageable subtasks for better organization.  
+Allows users to break down complex tasks into smaller, manageable subtasks for better organization using AI.  
 ![Subtask](frontend/public/subtasks.png)  
 
 **Subtask Created** 
@@ -105,8 +105,8 @@ Before running the project, ensure you have the following installed:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/nekesa-w/taskapp
-   cd taskapp/
+   git clone https://github.com/nekesa-w/focusflow_taskapp
+   cd focusflow_taskapp/
    ```
 
 2. **Build and start all services using Docker Compose**:
