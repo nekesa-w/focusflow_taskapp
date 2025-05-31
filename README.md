@@ -1,70 +1,64 @@
+Here is the updated version of your project documentation **with all Docker-related instructions and references removed**:
+
+---
+
 # FocusFlow - AI Powered Task Management App
+
 FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
 
 ---
 
 ## Features
 
-- **Task Management**: Create, update, delete and track tasks.
-- **Task Breakdown**: Automatically generate sub-tasks based on a given task using a LLM (SmolLM2-135M-INSTRUCT).
-- **User-Friendly Interface**: Simple and intuitive frontend built with React.
-- **LLM Integration**: Uses a custom-trained language model to break down complex tasks.
-- **MySQL Database**: Stores user data and tasks.
+* **Task Management**: Create, update, delete and track tasks.
+* **Task Breakdown**: Automatically generate sub-tasks based on a given task using a LLM (SmolLM2-135M-INSTRUCT).
+* **User-Friendly Interface**: Simple and intuitive frontend built with React.
+* **LLM Integration**: Uses a custom-trained language model to break down complex tasks.
+* **MySQL Database**: Stores user data and tasks.
 
 ---
 
 ## Images
 
-**Home**  
+**Home**
+The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.
+![Home](frontend/public/home.png)
 
-The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.  
-![Home](frontend/public/home.png)  
+**Login**
+The user authentication page allowing registered users to securely log into FocusFlow.
+![Login](frontend/public/login.png)
 
-**Login**  
+**Register**
+The sign-up page where new users can create an account to start managing their tasks.
+![Register](frontend/public/register.png)
 
-The user authentication page allowing registered users to securely log into FocusFlow.  
-![Login](frontend/public/login.png)  
+**New Task**
+A dedicated page for users to add new tasks with deadlines, priorities, and categories.
+![NewTask](frontend/public/newtask.png)
 
-**Register** 
+**Subtasks**
+Allows users to break down complex tasks into smaller, manageable subtasks for better organization using AI.
+![Subtask](frontend/public/subtasks.png)
 
-The sign-up page where new users can create an account to start managing their tasks.  
-![Register](frontend/public/register.png)  
+**Subtask Created**
+A confirmation page showing that a subtask has been successfully added to a main task.
+![SubtaskCreated](frontend/public/subtaskscreated.png)
 
-**New Task**  
+**Edit Task**
+Users can modify task details such as due date, priority, and description.
+![Edit](frontend/public/edittask.png)
 
-A dedicated page for users to add new tasks with deadlines, priorities, and categories.  
-![NewTask](frontend/public/newtask.png)  
+**To-Do Subtask**
+Displays a list of pending subtasks that need to be completed before the main task is done.
+![ToDoSubtask](frontend/public/todosubtask.png)
 
-**Subtasks**  
+**Done**
+Shows completed tasks and subtasks, helping users track their productivity.
+![Done](frontend/public/done.png)
 
-Allows users to break down complex tasks into smaller, manageable subtasks for better organization using AI.  
-![Subtask](frontend/public/subtasks.png)  
-
-**Subtask Created** 
-
-A confirmation page showing that a subtask has been successfully added to a main task.  
-![SubtaskCreated](frontend/public/subtaskscreated.png)  
-
-**Edit Task**  
-
-Users can modify task details such as due date, priority, and description.  
-![Edit](frontend/public/edittask.png)  
-
-**To-Do Subtask**  
-
-Displays a list of pending subtasks that need to be completed before the main task is done.  
-![ToDoSubtask](frontend/public/todosubtask.png)  
-
-**Done**  
-
-Shows completed tasks and subtasks, helping users track their productivity.  
-![Done](frontend/public/done.png)  
-
-**Past Due**  
-
-A section highlighting overdue tasks that need urgent attention.  
-![Pastdue](frontend/public/pastdue.png)  
-
+**Past Due**
+A section highlighting overdue tasks that need urgent attention.
+![Pastdue](frontend/public/pastdue.png)
 
 ---
 
@@ -73,21 +67,17 @@ A section highlighting overdue tasks that need urgent attention.
 ```
 project/
 ├── backend/                    # Django backend
-│   ├── Dockerfile               # Dockerfile for the backend
 │   ├── requirements.txt         # Backend dependencies
 │   └── taskapp/                 # Django app folder
 ├── frontend/                    # React frontend
-│   ├── Dockerfile               # Dockerfile for the frontend
 │   ├── package.json             # Frontend dependencies
 │   ├── package-lock.json        # Lock file for React dependencies
 │   └── public/                  # Public directory for React
 │   └── src/                     # Source code for React
 ├── llm/                         # LLM model directory
-│   ├── Dockerfile               # Dockerfile for the LLM module
 │   ├── requirements.txt         # LLM module dependencies
 │   ├── merged_model/            # Contains the SmolLM2-135M-INSTRUCT model and tokenizers
 │   └── testsmol135.ipynb        # Jupyter notebook for LLM module
-└── docker-compose.yml           # Docker Compose configuration for all services
 ```
 
 ---
@@ -96,65 +86,39 @@ project/
 
 Before running the project, ensure you have the following installed:
 
-- Docker
-- Docker Compose
+* Python (recommended: 3.10+)
+* Node.js & npm
+* MySQL Server
 
 ---
 
-## Setup
+## Setup Instructions
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/nekesa-w/focusflow_taskapp
-   cd focusflow_taskapp/
-   ```
+### 1. **Clone the Repository**
 
-2. **Build and start all services using Docker Compose**:
-   From the root directory (where `docker-compose.yml` is located), run the following command to build and start all containers:
+```bash
+git clone https://github.com/nekesa-w/focusflow_taskapp
+cd focusflow_taskapp/
+```
 
-   ```bash
-   docker-compose up --build
-   ```
+### 2. **Set Up the Backend (Django)**
 
-3. **Access the Services**:
+Install Python dependencies:
 
-   - **Backend (Django)**: Open your browser and navigate to `http://localhost:8000` for the backend.
-   - **Frontend (React/Vite)**: Open `http://localhost:5173` to access the frontend.
-   - **LLM Module (Jupyter Notebook)**: Access Jupyter at `http://localhost:8888` (no authentication required).
-   - **MySQL Database**: The MySQL database is accessible at `localhost:3306`.
+```bash
+cd backend/
+pip install -r requirements.txt
+```
 
-4. **Stop the Containers**:
-   To stop the containers, use the following command:
-   ```bash
-   docker-compose down
-   ```
-
----
-
-## Docker Compose Configuration
-
-The `docker-compose.yml` file contains the configuration to spin up four services:
-
-1. **Backend**: Django application running on port `8000`.
-2. **Frontend**: React application (served via Vite) running on port `5173`.
-3. **LLM**: Jupyter Notebook file, which allows interaction with the `SmolLM2-135M-INSTRUCT` model, accessible on port `8888`.
-4. **MySQL**: MySQL database running on port `3306`, configured with root, no password and the `taskapp` schema.
-
----
-
-## Backend Configuration
-
-Ensure that your Django `settings.py` file is configured to use MySQL by setting the following environment variables:
+Configure your MySQL database and ensure the Django `settings.py` uses:
 
 ```python
-import os
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "taskapp",
         "USER": "root",
-        "PASSWORD": "",
+        "PASSWORD": "",  # update with your password if any
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {
@@ -164,19 +128,54 @@ DATABASES = {
 }
 ```
 
----
+Run database migrations:
 
-## Running Jupyter Notebook for LLM
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
-The LLM module is set up with Jupyter Notebook running on port `8888`. This allows users to interact with the fine-tuned **SmolLM2-135M-INSTRUCT** model, break down tasks, and experiment with the model directly.
+Start the backend server:
 
-To interact with the Jupyter notebook:
+```bash
+python manage.py runserver
+```
 
-1. Open `http://localhost:8888` in your browser.
-2. Run the `testsmol135.ipynb` notebook or other notebooks to explore the model’s capabilities.
+### 3. **Set Up the Frontend (React)**
+
+Install frontend dependencies:
+
+```bash
+cd frontend/
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Access the app at `http://localhost:5173`
+
+### 4. **Run the LLM Notebook**
+
+To experiment with the AI model:
+
+```bash
+cd llm/
+pip install -r requirements.txt
+jupyter notebook
+```
+
+Then open the `testsmol135.ipynb` notebook in your browser to test and interact with the model.
 
 ---
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Let me know if you'd also like help converting the backend to SQLite or PostgreSQL for simpler local development!
