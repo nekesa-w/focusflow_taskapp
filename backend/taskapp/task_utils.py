@@ -3,7 +3,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import random
 import re
 
-checkpoint = "C:/xampp/htdocs/taskapp/llm/merged_model"
+checkpoint = "HuggingFaceTB/SmolLM2-135M-Instruct"
 device = "cpu"
 
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
