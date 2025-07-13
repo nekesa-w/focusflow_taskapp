@@ -1,7 +1,3 @@
-Here is the updated version of your project documentation **with all Docker-related instructions and references removed**:
-
----
-
 # FocusFlow - AI Powered Task Management App
 
 FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
@@ -58,7 +54,7 @@ Shows completed tasks and subtasks, helping users track their productivity.
 
 **Past Due**
 A section highlighting overdue tasks that need urgent attention.
-![Pastdue](frontend/public/pastdue.png)
+![Pastdue](screenshots/pastdue.png)
 
 ---
 
@@ -175,7 +171,3 @@ Then open the `testsmol135.ipynb` notebook in your browser to test and interact 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Let me know if you'd also like help converting the backend to SQLite or PostgreSQL for simpler local development!
