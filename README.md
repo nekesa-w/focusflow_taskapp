@@ -18,39 +18,39 @@ FocusFlow is a web-based task management app designed to assist users, particula
 
 **Home**
 The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.
-![Home](frontend/public/home.png)
+![Home](screenshots/home.png)
 
 **Login**
 The user authentication page allowing registered users to securely log into FocusFlow.
-![Login](frontend/public/login.png)
+![Login](screenshots/login.png)
 
 **Register**
 The sign-up page where new users can create an account to start managing their tasks.
-![Register](frontend/public/register.png)
+![Register](screenshots/register.png)
 
 **New Task**
 A dedicated page for users to add new tasks with deadlines, priorities, and categories.
-![NewTask](frontend/public/newtask.png)
+![NewTask](screenshots/newtask.png)
 
 **Subtasks**
 Allows users to break down complex tasks into smaller, manageable subtasks for better organization using AI.
-![Subtask](frontend/public/subtasks.png)
+![Subtask](screenshots/subtasks.png)
 
 **Subtask Created**
 A confirmation page showing that a subtask has been successfully added to a main task.
-![SubtaskCreated](frontend/public/subtaskscreated.png)
+![SubtaskCreated](screenshots/subtaskscreated.png)
 
 **Edit Task**
 Users can modify task details such as due date, priority, and description.
-![Edit](frontend/public/edittask.png)
+![Edit](screenshots/edittask.png)
 
 **To-Do Subtask**
 Displays a list of pending subtasks that need to be completed before the main task is done.
-![ToDoSubtask](frontend/public/todosubtask.png)
+![ToDoSubtask](screenshots/todosubtasks.png)
 
 **Done**
 Shows completed tasks and subtasks, helping users track their productivity.
-![Done](frontend/public/done.png)
+![Done](screenshots/done.png)
 
 **Past Due**
 A section highlighting overdue tasks that need urgent attention.
