@@ -103,10 +103,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "taskapp",
-        "USER": "root",
-        "PASSWORD": "",  # update with your password if any
-        "HOST": "localhost",
-        "PORT": "3306",
+        "USER": "",          # Replace with your DB username
+        "PASSWORD": "",      # Replace with your DB password
+        "HOST": "127.0.0.1", # Use "localhost" or your DB host
+        "PORT": "3306",      # Use "3306" or your DB port
         "OPTIONS": {
             "init_command": "SET default_storage_engine=INNODB",
         },
