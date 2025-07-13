@@ -53,7 +53,7 @@ FocusFlow is a web-based task management app designed to assist users, particula
 ```
 project/
 ├── backend/                    # Django backend
-│   ├── requirements.txt         # Backend dependencies
+│   ├── backend                  # Backend folder
 │   └── taskapp/                 # Django app folder
 ├── frontend/                    # React frontend
 │   ├── package.json             # Frontend dependencies
@@ -61,8 +61,8 @@ project/
 │   └── public/                  # Public directory for React
 │   └── src/                     # Source code for React
 ├── llm/                         # LLM model directory
-│   ├── requirements.txt         # LLM module dependencies
-│   ├── merged_model/            # Contains the SmolLM2-135M-INSTRUCT model and tokenizers
+│   ├── merged_model             # Contains model and tokenizers
+│   ├── taskcsv/                 # Contain dataset
 │   └── testsmol135.ipynb        # Jupyter notebook for LLM module
 ```
 
@@ -92,7 +92,6 @@ cd focusflow_taskapp/
 Install Python dependencies:
 
 ```bash
-cd backend/
 pip install -r requirements.txt
 ```
 
@@ -149,7 +148,6 @@ Access the app at `http://localhost:5173`
 To experiment with the AI model:
 
 ```bash
-cd llm/
 pip install -r requirements.txt
 jupyter notebook
 ```
