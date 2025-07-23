@@ -1,0 +1,4 @@
+main - #4f97e8
+sec - #4fe8a0
+dark grey - #5c5c5c
+grey - #a3a3a3

@@ -14,10 +14,9 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import TodayIcon from "@mui/icons-material/Today";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
-import EventNoteIcon from "@mui/icons-material/EventNote";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import { Link, useLocation } from "react-router-dom";
 import AxiosInstance from "./AxiosInstance";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -74,21 +73,23 @@ function Navbar(props) {
 				flexDirection="column"
 			>
 				<img
-					src="/logo.webp"
+					src="/logo.png"
 					alt="Logo"
 					style={{ width: "60px", height: "auto" }}
 				/>
 				<Typography
 					variant="h5"
 					sx={{
-						fontWeight: "bold",
-						color: "#2d74b2",
+						fontWeight: 400,
 						margin: 0,
 						textAlign: "center",
+						fontFamily: "Inter",
+						background: "linear-gradient(90deg, #4f97e8, #4fe8a0)",
+						WebkitBackgroundClip: "text",
+						WebkitTextFillColor: "transparent",
 					}}
 				>
-					FOCUS <br />
-					FLOW
+					SONGA
 				</Typography>
 			</Box>
 			<Box
@@ -117,13 +118,13 @@ function Navbar(props) {
 							width: "100%",
 							display: "flex",
 							alignItems: "center",
-							gap: "10px",
+							gap: "5px",
 						}}
 					>
-						<TodayIcon sx={{ color: "#575757" }} />
+						<TodayIcon sx={{ color: "#5c5c5c" }} />
 						<ListItemText
 							primary="Home"
-							sx={{ textAlign: "center", color: "#575757" }}
+							sx={{ textAlign: "center", color: "#5c5c5c" }}
 						/>
 					</ListItemButton>
 				</ListItem>
@@ -137,13 +138,13 @@ function Navbar(props) {
 							width: "100%",
 							display: "flex",
 							alignItems: "center",
-							gap: "10px",
+							gap: "5px",
 						}}
 					>
-						<EventBusyIcon sx={{ color: "#575757" }} />
+						<EventBusyIcon sx={{ color: "#5c5c5c" }} />
 						<ListItemText
 							primary="Overdue"
-							sx={{ textAlign: "center", color: "#575757" }}
+							sx={{ textAlign: "center", color: "#5c5c5c" }}
 						/>
 					</ListItemButton>
 				</ListItem>
@@ -157,13 +158,13 @@ function Navbar(props) {
 							width: "100%",
 							display: "flex",
 							alignItems: "center",
-							gap: "10px",
+							gap: "5px",
 						}}
 					>
-						<EventAvailableIcon sx={{ color: "#575757" }} />
+						<EventAvailableIcon sx={{ color: "#5c5c5c" }} />
 						<ListItemText
 							primary="Completed"
-							sx={{ textAlign: "center", color: "#575757" }}
+							sx={{ textAlign: "center", color: "#5c5c5c" }}
 						/>
 					</ListItemButton>
 				</ListItem>
@@ -187,8 +188,9 @@ function Navbar(props) {
 					marginTop: { xs: 0, sm: "20px" },
 					marginRight: { xs: 0, sm: "20px" },
 					padding: "10px",
+					border: "1px solid #e4e4e4",
 					borderTopRightRadius: { xs: 0, sm: "10px" },
-					color: "#575757",
+					color: "#5c5c5c",
 					boxShadow: "none",
 				}}
 			>
@@ -215,7 +217,7 @@ function Navbar(props) {
 									primary={firstName ? `Hello, ${firstName}` : "Hello, User"}
 									sx={{
 										textAlign: "center",
-										color: "#2d74b2",
+										color: "#4f97e8",
 										whiteSpace: "nowrap",
 									}}
 								/>
@@ -225,7 +227,7 @@ function Navbar(props) {
 							<ListItemButton onClick={logoutUser}>
 								<ListItemText
 									primary="Logout"
-									sx={{ textAlign: "center", color: "#575757" }}
+									sx={{ textAlign: "center", color: "#5c5c5c" }}
 								/>
 							</ListItemButton>
 						</ListItem>
@@ -272,7 +274,6 @@ function Navbar(props) {
 							border: "1px solid #e4e4e4",
 							borderTopLeftRadius: { xs: 0, sm: "10px" },
 							borderBottomLeftRadius: { xs: 0, sm: "10px" },
-							boxShadow: "-1px 1px 10px rgba(0, 0, 0, .1)",
 						},
 					}}
 					open
@@ -293,7 +294,6 @@ function Navbar(props) {
 					border: "1px solid #e4e4e4",
 					borderTopRightRadius: { xs: 0, sm: "10px" },
 					borderBottomRightRadius: { xs: 0, sm: "10px" },
-					boxShadow: "1px 1px 10px rgba(0, 0, 0, .1)",
 					overflowY: "auto",
 				}}
 			>

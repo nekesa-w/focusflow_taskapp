@@ -1,6 +1,6 @@
-# FocusFlow - AI Powered Task Management App
+# Songa - AI Powered Task Management App
 
-FocusFlow is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
+Songa is a web-based task management app designed to assist users, particularly those with ADHD, by breaking down tasks into smaller, manageable steps. The app integrates the **SmolLM2-135M-INSTRUCT** model, which is used to help users deconstruct complex tasks into more digestible and motivational sub-tasks.
 
 ---
 
@@ -16,10 +16,10 @@ FocusFlow is a web-based task management app designed to assist users, particula
 
 ## Images
 
-**Home**: The main dashboard of FocusFlow, providing an overview of tasks and productivity insights.
+**Home**: The main dashboard of Songa, providing an overview of tasks and productivity insights.
 ![Home](screenshots/home.png)
 
-**Login**: The user authentication page allowing registered users to securely log into FocusFlow.
+**Login**: The user authentication page allowing registered users to securely log into Songa.
 ![Login](screenshots/login.png)
 
 **Register**: The sign-up page where new users can create an account to start managing their tasks.
@@ -83,8 +83,8 @@ Before running the project, ensure you have the following installed:
 ### 1. **Clone the Repository**
 
 ```bash
-git clone https://github.com/nekesa-w/focusflow_taskapp
-cd focusflow_taskapp/
+git clone https://github.com/nekesa-w/songa_taskapp
+cd songa_taskapp/
 ```
 
 ### 2. **Set Up the Backend (Django)**

@@ -16,6 +16,7 @@ import TaskForm from "../components/TaskForm";
 import AddIcon from "@mui/icons-material/Add";
 import { formatDueDate } from "../components/utils";
 import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
 
 const Overdue = () => {
 	const [tasks, setTasks] = useState([]);
@@ -164,22 +165,37 @@ const Overdue = () => {
 												/>
 											</Box>
 										}
-										label={<Box className="task-title">{task.title} by</Box>}
+										label={
+											<Box
+												className="task-label-combined"
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													width: "100%",
+												}}
+											>
+												<Box className="task-title" sx={{ flexShrink: 0 }}>
+													{task.title} by
+												</Box>
+												<Box
+													className="task-due-date-overdue"
+													sx={{ marginLeft: "auto", flexShrink: 0 }}
+												>
+													{formatDueDate(task.due_date)}
+												</Box>
+												<Box className="task-edit" sx={{ flexShrink: 0 }}>
+													<IconButton
+														className="task-edit-button"
+														color="primary"
+														onClick={() => handleEditClick(task)}
+														size="small"
+													>
+														<EditIcon />
+													</IconButton>
+												</Box>
+											</Box>
+										}
 									/>
-
-									<Box className="task-due-date-overdue">
-										{formatDueDate(task.due_date)}
-									</Box>
-
-									<Box className="task-edit">
-										<Button
-											className="task-edit-button"
-											variant="text"
-											color="primary"
-											onClick={() => handleEditClick(task)}
-											startIcon={<EditIcon />}
-										/>
-									</Box>
 								</Box>
 
 								{taskSubtasks.length > 0 && (
@@ -244,7 +260,7 @@ const Overdue = () => {
 				</DialogContent>
 				<DialogActions className="task-dialog-actions">
 					<button className="task-dialog-close" onClick={handleClose}>
-						Close
+						CLOSE
 					</button>
 				</DialogActions>
 			</Dialog>

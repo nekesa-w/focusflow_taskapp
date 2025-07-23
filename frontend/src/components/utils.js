@@ -10,7 +10,7 @@ export const formatDueDate = (dueDate) => {
 	}
 
 	if (dayDifference > 0 && dayDifference <= 7) {
-		return `This ${dayOfWeek}`;
+		return `${dayOfWeek}`;
 	}
 
 	if (dayDifference < 0 && dayDifference >= -7) {

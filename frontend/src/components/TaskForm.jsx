@@ -374,18 +374,18 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 	return (
 		<Box className="task-form">
 			{error && (
-				<Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+				<Typography variant="body1" color="error" sx={{ marginBottom: 1 }}>
 					{error}
 				</Typography>
 			)}
 
 			{success && (
-				<Typography variant="body1" color="success" sx={{ marginBottom: 2 }}>
+				<Typography variant="body1" color="success" sx={{ marginBottom: 1 }}>
 					{success}
 				</Typography>
 			)}
 
-			<Box className="form-input" sx={{ marginBottom: 1 }}>
+			<Box className="form-input" sx={{ marginBottom: 1, marginTop: 1 }}>
 				<TextField
 					label="Task Title"
 					variant="outlined"
@@ -394,7 +394,7 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 					onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
 				/>
 			</Box>
-			<Box className="form-input" sx={{ marginBottom: 1 }}>
+			<Box className="form-input" sx={{ marginBottom: 1, marginTop: 1 }}>
 				<TextField
 					label="Due Date"
 					variant="outlined"
@@ -412,7 +412,10 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 			{subtasks && subtasks.length > 0 && (
 				<Box className="subtask-section">
 					{subtasks.map((subtask, index) => (
-						<Box key={subtask.subtask_id} sx={{ marginBottom: 4 }}>
+						<Box
+							key={subtask.subtask_id}
+							sx={{ marginBottom: 2, marginTop: 2 }}
+						>
 							<TextField
 								label={`Subtask ${index + 1} Title`}
 								variant="outlined"
@@ -492,16 +495,14 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 						sx={{ marginBottom: 2, textAlign: "left" }}
 						className="task-dialog-desc"
 					>
-						Break your task into smaller steps. Each step is framed with
-						positive, motivating language to keep you inspired. Whether simple
-						or detailed, every task will remind you of your progress and bring
-						you closer to your goal
+						Break your task into smaller steps with each step framed with
+						motivating language to keep you inspired.
 					</Typography>
-					<Divider sx={{ marginBottom: 2, borderColor: "#2d74b2" }} />
+					<Divider sx={{ marginBottom: 2, borderColor: "#4f97e8" }} />
 					<Typography
 						variant="h6"
 						className="task-dialog-titlesmall"
-						sx={{ marginBottom: 2, textAlign: "center", color: "#2d74b2" }}
+						sx={{ marginBottom: 1, textAlign: "center", color: "#4f97e8" }}
 					>
 						Customize your subtasks
 					</Typography>
@@ -608,7 +609,7 @@ const TaskForm = ({ task, onTaskCreated, onTaskUpdated }) => {
 				</DialogContent>
 				<DialogActions className="task-dialog-actions">
 					<button className="task-dialog-close" onClick={handleCloseDialog}>
-						Close
+						CLOSE
 					</button>
 				</DialogActions>
 			</Dialog>
